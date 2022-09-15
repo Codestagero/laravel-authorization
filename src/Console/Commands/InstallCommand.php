@@ -174,12 +174,18 @@ class InstallCommand extends Command
             return false;
         }
 
+        // Build the middleware class' FQN
+        $middlewareQualifiedName = CheckAuthorizationMiddleware::class;
+        if (!str_starts_with($middlewareQualifiedName, '\\')) {
+            $middlewareQualifiedName = '\\' . $middlewareQualifiedName;
+        }
+
         // Add the middleware to each group
         foreach ($groups as $group => $groupMiddleware) {
             if (!in_array(CheckAuthorizationMiddleware::class, $groupMiddleware)) {
                 $newFileContents = preg_replace(
-                    '/([\'"]' . $group . '[\'"] => \[[a-zA-Z0-9\s:,/\'"]+?)((?:\w|\)+)?SubstituteBindings::class)/mg',
-                    '$1' . CheckAuthorizationMiddleware::class . ',\n\t$2',
+                    '/([\'"]' . $group . '[\'"] => \\[[a-zA-Z\\s:,\\/\\\\\'\"]+?)([ \\t]+)((?:(?:\\w|\\\\)+)?SubstituteBindings::class)/m',
+                    '$1$2' . $middlewareQualifiedName . "::class,\n$2$3",
                     $newFileContents
                 );
             }
