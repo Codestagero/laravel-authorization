@@ -7,6 +7,11 @@
             "Codestage\\Authorization\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Codestage\\Authorization\\Tests\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "Marin Călin",
@@ -14,7 +19,10 @@
         }
     ],
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.11"
+        "friendsofphp/php-cs-fixer": "^3.11",
+        "phpunit/phpunit": "^9.5",
+        "mockery/mockery": "^1.5",
+        "orchestra/testbench": "^7.7"
     },
     "require": {
         "illuminate/support": "^9.30"
