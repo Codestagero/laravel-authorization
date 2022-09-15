@@ -49,7 +49,7 @@ class InstallCommand extends Command
         $configurationContents = file_get_contents($this->laravel->configPath('authorization.php'));
         $configurationContents = str_ireplace(
             'Codestage\Authorization\Contracts\IPermissionEnum::class',
-            self::PermissionEnumNamespace . '\Permission',
+            self::PermissionEnumNamespace . '\Permission::class',
             $configurationContents
         );
         if (file_put_contents($this->laravel->configPath('authorization.php'), $configurationContents) === false) {
