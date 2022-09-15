@@ -5,7 +5,7 @@ namespace Codestage\Authorization\Tests\Unit;
 use Codestage\Authorization\Tests\TestCase;
 
 /**
- * @coversNothing 
+ * @coversNothing
  */
 class ExampleTest extends TestCase
 {
