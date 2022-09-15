@@ -1,0 +1,17 @@
+{
+    "name": "codestage/laravel-authorization",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Codestage\\Authorization\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Marin Călin",
+            "email": "marincalin2551@hotmail.com"
+        }
+    ],
+    "require": {}
+}
