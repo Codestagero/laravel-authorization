@@ -3,10 +3,8 @@
 namespace Codestage\Authorization\Services;
 
 use Closure;
-use Codestage\Authorization\Attributes\AllowAnonymous;
-use Codestage\Authorization\Attributes\Authorize;
-use Codestage\Authorization\Contracts\IPermissionEnum;
-use Codestage\Authorization\Contracts\ITraitService;
+use Codestage\Authorization\Attributes\{AllowAnonymous, Authorize};
+use Codestage\Authorization\Contracts\{IPermissionEnum, ITraitService};
 use Codestage\Authorization\Traits\HasPermissions;
 use Illuminate\Contracts\Auth\Guard as AuthManager;
 use Illuminate\Database\Eloquent\Model;
@@ -48,8 +46,9 @@ class TraitService implements ITraitService
     {
         $reflectionClass = new ReflectionClass($className);
         $method = $reflectionClass->getMethod($methodName);
+
         return (new Collection($method->getAttributes()))
-            ->filter(fn (ReflectionAttribute $attribute) => in_array($attribute->getName(), self::AuthorizationAttributes));
+            ->filter(fn (ReflectionAttribute $attribute) => \in_array($attribute->getName(), self::AuthorizationAttributes));
     }
 
     /**
@@ -60,8 +59,9 @@ class TraitService implements ITraitService
     private function extractTraitsFromClass(string $className): Collection
     {
         $reflectionClass = new ReflectionClass($className);
+
         return (new Collection($reflectionClass->getAttributes()))
-            ->filter(fn (ReflectionAttribute $attribute) => in_array($attribute->getName(), self::AuthorizationAttributes));
+            ->filter(fn (ReflectionAttribute $attribute) => \in_array($attribute->getName(), self::AuthorizationAttributes));
     }
 
     /**
@@ -76,6 +76,7 @@ class TraitService implements ITraitService
     {
         $classTraits = $this->extractTraitsFromClass($className);
         $methodTraits = $this->extractTraitsFromClassMethod($className, $methodName);
+
         return $classTraits->merge($methodTraits);
     }
 
@@ -89,8 +90,9 @@ class TraitService implements ITraitService
     private function computeTraitsForClosure(Closure $closure): Collection
     {
         $reflectionFunction = new ReflectionFunction($closure);
+
         return (new Collection($reflectionFunction->getAttributes()))
-            ->filter(fn (ReflectionAttribute $attribute) => in_array($attribute->getName(), self::AuthorizationAttributes));
+            ->filter(fn (ReflectionAttribute $attribute) => \in_array($attribute->getName(), self::AuthorizationAttributes));
     }
 
     /**
@@ -102,7 +104,7 @@ class TraitService implements ITraitService
     private function canAccessThroughTraits(Collection|array $traits): bool
     {
         // Make sure the traits are a Collection
-        if (is_array($traits)) {
+        if (\is_array($traits)) {
             $traits = new Collection($traits);
         }
 
@@ -138,7 +140,7 @@ class TraitService implements ITraitService
                     }
 
                     // Check for role constraints
-                    if (is_string($constraint)) {
+                    if (\is_string($constraint)) {
                         return $user->hasRole($constraint);
                     }
 
@@ -164,7 +166,8 @@ class TraitService implements ITraitService
      * @throws ReflectionException
      * @return bool
      */
-    public function canAccessControllerMethod(string $className, string $methodName): bool {
+    public function canAccessControllerMethod(string $className, string $methodName): bool
+    {
         $traits = $this->computeTraitsForClassMethod($className, $methodName);
 
         return $this->canAccessThroughTraits($traits);
@@ -180,6 +183,7 @@ class TraitService implements ITraitService
     public function canAccessClosure(Closure $closure): bool
     {
         $traits = $this->computeTraitsForClosure($closure);
+
         return $this->canAccessThroughTraits($traits);
     }
 }

@@ -3,9 +3,7 @@
 namespace Codestage\Authorization\Traits;
 
 use Codestage\Authorization\Contracts\IPermissionEnum;
-use Codestage\Authorization\Models\Role;
-use Codestage\Authorization\Models\RolePermission;
-use Codestage\Authorization\Models\UserRole;
+use Codestage\Authorization\Models\{Role, RolePermission, UserRole};
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Collection;
 

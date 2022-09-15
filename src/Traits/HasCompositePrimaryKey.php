@@ -2,7 +2,6 @@
 
 namespace Codestage\Authorization\Traits;
 
-
 use Exception;
 use Illuminate\Database\Eloquent\{Builder};
 
@@ -64,4 +63,3 @@ trait HasCompositePrimaryKey
         return $query->first($columns);
     }
 }
-

@@ -4,15 +4,14 @@ namespace Codestage\Authorization\Tests\Feature;
 
 use Codestage\Authorization\Middleware\AuthorizeMiddleware;
 use Codestage\Authorization\Tests\Fakes\Enums\FakePermission;
-use Codestage\Authorization\Tests\Fakes\Http\Controllers\PermissionsAuthorizationTest\PermissionAuthorizationController1;
-use Codestage\Authorization\Tests\Fakes\Http\Controllers\PermissionsAuthorizationTest\PermissionAuthorizationController2;
-use Codestage\Authorization\Tests\Fakes\Http\Controllers\PermissionsAuthorizationTest\PermissionAuthorizationController3;
-use Codestage\Authorization\Tests\Fakes\Http\Controllers\PermissionsAuthorizationTest\PermissionAuthorizationController4;
+use Codestage\Authorization\Tests\Fakes\Http\Controllers\PermissionsAuthorizationTest\{PermissionAuthorizationController1, PermissionAuthorizationController2, PermissionAuthorizationController3, PermissionAuthorizationController4};
 use Codestage\Authorization\Tests\TestCase;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\{Route, URL};
 use Illuminate\Testing\TestResponse;
 
+/**
+ * @coversNothing
+ */
 class PermissionsAuthorizationTest extends TestCase
 {
     /**

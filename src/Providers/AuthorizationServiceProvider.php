@@ -16,7 +16,7 @@ class AuthorizationServiceProvider extends ServiceProvider
     public array $bindings = [
         ITraitService::class => TraitService::class
     ];
-    
+
     /**
      * Bootstrap any application services.
      *

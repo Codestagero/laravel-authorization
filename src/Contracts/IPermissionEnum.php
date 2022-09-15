@@ -6,5 +6,4 @@ use BackedEnum;
 
 interface IPermissionEnum extends BackedEnum
 {
-
 }

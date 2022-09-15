@@ -3,27 +3,23 @@
 namespace Codestage\Authorization\Tests;
 
 use Codestage\Authorization\Contracts\IPermissionEnum;
-use Codestage\Authorization\Models\Role;
-use Codestage\Authorization\Models\RolePermission;
-use Codestage\Authorization\Models\UserRole;
+use Codestage\Authorization\Models\{Role, RolePermission, UserRole};
 use Codestage\Authorization\Providers\AuthorizationServiceProvider;
 use Codestage\Authorization\Tests\Fakes\Enums\FakePermission;
 use Codestage\Authorization\Traits\HasPermissions;
 use Illuminate\Config\Repository;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Foundation\Testing\{RefreshDatabase, WithFaker};
+use Illuminate\Support\Facades\{Auth, Schema};
 use Illuminate\Support\Str;
 use Mockery;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
 {
-    use WithFaker;
     use RefreshDatabase;
+    use WithFaker;
 
     /**
      * @inheritDoc
@@ -54,7 +50,7 @@ abstract class TestCase extends OrchestraTestCase
         $this->refreshDatabase();
 
         // Create a fake users table
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table): void {
             $table->id();
             $table->timestamps();
         });

@@ -2,8 +2,7 @@
 
 namespace Codestage\Authorization\Tests\Fakes\Http\Controllers\SimpleAuthorizationTest;
 
-use Codestage\Authorization\Attributes\AllowAnonymous;
-use Codestage\Authorization\Attributes\Authorize;
+use Codestage\Authorization\Attributes\{AllowAnonymous, Authorize};
 use Illuminate\Support\Facades\Response;
 
 #[Authorize]

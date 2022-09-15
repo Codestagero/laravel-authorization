@@ -5,9 +5,9 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up()
+    public function up(): void
     {
-        Schema::create('role_permissions', function (Blueprint $table) {
+        Schema::create('role_permissions', function (Blueprint $table): void {
             $table->foreignUuid('role_id')
                 ->references('id')
                 ->on('roles')
@@ -20,7 +20,7 @@ return new class extends Migration {
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('role_permissions');
     }

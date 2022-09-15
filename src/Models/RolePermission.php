@@ -1,6 +1,7 @@
 <?php
 
 namespace Codestage\Authorization\Models;
+
 use Carbon\Carbon;
 use Codestage\Authorization\Contracts\IPermissionEnum;
 use Codestage\Authorization\Traits\HasCompositePrimaryKey;

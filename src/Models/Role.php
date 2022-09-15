@@ -5,9 +5,7 @@ namespace Codestage\Authorization\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
-
+use Illuminate\Support\{Collection, Str};
 
 /**
  * @template    TPermission of \Codestage\Authorization\Contracts\IPermissionEnum

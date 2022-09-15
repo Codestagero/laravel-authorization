@@ -3,15 +3,14 @@
 namespace Codestage\Authorization\Tests\Feature;
 
 use Codestage\Authorization\Middleware\AuthorizeMiddleware;
-use Codestage\Authorization\Tests\Fakes\Http\Controllers\RoleAuthorizationTest\RoleAuthorizationController1;
-use Codestage\Authorization\Tests\Fakes\Http\Controllers\RoleAuthorizationTest\RoleAuthorizationController2;
-use Codestage\Authorization\Tests\Fakes\Http\Controllers\RoleAuthorizationTest\RoleAuthorizationController3;
-use Codestage\Authorization\Tests\Fakes\Http\Controllers\RoleAuthorizationTest\RoleAuthorizationController4;
+use Codestage\Authorization\Tests\Fakes\Http\Controllers\RoleAuthorizationTest\{RoleAuthorizationController1, RoleAuthorizationController2, RoleAuthorizationController3, RoleAuthorizationController4};
 use Codestage\Authorization\Tests\TestCase;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\{Route, URL};
 use Illuminate\Testing\TestResponse;
 
+/**
+ * @coversNothing
+ */
 class RoleAuthorizationTest extends TestCase
 {
     /**

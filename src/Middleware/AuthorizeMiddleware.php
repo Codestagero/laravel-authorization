@@ -27,7 +27,6 @@ class AuthorizeMiddleware
      */
     public function handle(Request $request, Closure $next): mixed
     {
-
         // If the request is made to an action inside a controller
         if ($this->_requestUsesController($request)) {
             $controller = $request->route()->getControllerClass();
