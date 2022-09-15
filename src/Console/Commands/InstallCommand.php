@@ -14,7 +14,7 @@ class InstallCommand extends Command
     const PermissionEnumPath = 'app/Enums/Permission.php';
     const PermissionEnumNamespace = 'App\Enums';
     const KernelPath = 'app/Http/Kernel.php';
-    const KernelClass = '\App\Http\Kernel::class';
+    const KernelClass = '\App\Http\Kernel';
 
     /**
      * The name and signature of the console command.
