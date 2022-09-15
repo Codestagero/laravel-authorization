@@ -6,5 +6,7 @@ use Codestage\Authorization\Contracts\IPermissionEnum;
 
 enum FakePermission: string implements IPermissionEnum
 {
-    case ExamplePermission = 'example.test';
+    case ExamplePermission1 = 'example.test';
+    case ExamplePermission2 = 'example.anotherTest';
+    case ExamplePermission3 = 'example.thisIsNotATest';
 }

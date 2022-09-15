@@ -47,7 +47,6 @@ class Role extends Model
         parent::boot();
 
         static::creating(function (Role $model): void {
-            // Generate a payment id
             $model->id = Str::uuid();
         });
     }

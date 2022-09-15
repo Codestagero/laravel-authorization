@@ -2,10 +2,21 @@
 
 namespace Codestage\Authorization\Providers;
 
+use Codestage\Authorization\Contracts\ITraitService;
+use Codestage\Authorization\Services\TraitService;
 use Illuminate\Support\ServiceProvider;
 
 class AuthorizationServiceProvider extends ServiceProvider
 {
+    /**
+     * All the container bindings that should be registered.
+     *
+     * @var array
+     */
+    public array $bindings = [
+        ITraitService::class => TraitService::class
+    ];
+    
     /**
      * Bootstrap any application services.
      *
