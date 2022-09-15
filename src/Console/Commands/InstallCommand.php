@@ -85,7 +85,7 @@ class InstallCommand extends Command
         }
 
         // Get the stub contents
-        $stub = file_get_contents($this->laravel->basePath('vendor/codestage/stubs/permission_enum.stub'));
+        $stub = file_get_contents($this->laravel->basePath('vendor/codestage/laravel-authorization/stubs/permission_enum.stub'));
 
         // Replace the namespace
         $stub = str_ireplace('{{ namespace }}', self::PermissionEnumNamespace, $stub);
