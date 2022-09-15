@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use ReflectionException;
 use Throwable;
 
-class AuthorizeMiddleware
+class CheckAuthorizationMiddleware
 {
     /**
      * AuthorizeMiddleware constructor method.

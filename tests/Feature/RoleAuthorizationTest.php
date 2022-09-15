@@ -2,8 +2,11 @@
 
 namespace Codestage\Authorization\Tests\Feature;
 
-use Codestage\Authorization\Middleware\AuthorizeMiddleware;
-use Codestage\Authorization\Tests\Fakes\Http\Controllers\RoleAuthorizationTest\{RoleAuthorizationController1, RoleAuthorizationController2, RoleAuthorizationController3, RoleAuthorizationController4};
+use Codestage\Authorization\Middleware\CheckAuthorizationMiddleware;
+use Codestage\Authorization\Tests\Fakes\Http\Controllers\RoleAuthorizationTest\{RoleAuthorizationController1,
+    RoleAuthorizationController2,
+    RoleAuthorizationController3,
+    RoleAuthorizationController4};
 use Codestage\Authorization\Tests\TestCase;
 use Illuminate\Support\Facades\{Route, URL};
 use Illuminate\Testing\TestResponse;
@@ -20,7 +23,7 @@ class RoleAuthorizationTest extends TestCase
     public function OnlyClassGuard_WhenClassRequiresAuthorizationAndNotAuthenticated_Unauthorized(): void
     {
         // Arrange
-        Route::get('test1', RoleAuthorizationController1::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', RoleAuthorizationController1::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -40,7 +43,7 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser();
-        Route::get('test1', RoleAuthorizationController1::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', RoleAuthorizationController1::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -60,7 +63,7 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser(roles: ['test-role-1']);
-        Route::get('test1', RoleAuthorizationController1::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', RoleAuthorizationController1::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -79,7 +82,7 @@ class RoleAuthorizationTest extends TestCase
     public function MultipleOptional_WhenClassRequiresAuthorizationAndNotAuthenticated_Unauthorized(): void
     {
         // Arrange
-        Route::get('test1', RoleAuthorizationController2::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', RoleAuthorizationController2::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -99,7 +102,7 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser();
-        Route::get('test1', RoleAuthorizationController2::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', RoleAuthorizationController2::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -119,7 +122,7 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser(roles: ['test-role-2']);
-        Route::get('test1', RoleAuthorizationController2::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', RoleAuthorizationController2::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -139,7 +142,7 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser(roles: ['test-role-1']);
-        Route::get('test1', RoleAuthorizationController2::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', RoleAuthorizationController2::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -159,7 +162,7 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser(roles: ['test-role-3']);
-        Route::get('test1', RoleAuthorizationController2::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', RoleAuthorizationController2::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -179,7 +182,7 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser(roles: ['test-role-1', 'test-role-3']);
-        Route::get('test1', RoleAuthorizationController2::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', RoleAuthorizationController2::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -198,7 +201,7 @@ class RoleAuthorizationTest extends TestCase
     public function MultipleRequired_WhenNotAuthenticated_Unauthorized(): void
     {
         // Arrange
-        Route::get('test1', RoleAuthorizationController3::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', RoleAuthorizationController3::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -218,7 +221,7 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser();
-        Route::get('test1', RoleAuthorizationController3::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', RoleAuthorizationController3::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -238,7 +241,7 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser(roles: ['test-role-1']);
-        Route::get('test1', RoleAuthorizationController3::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', RoleAuthorizationController3::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -258,7 +261,7 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser(roles: ['test-role-3']);
-        Route::get('test1', RoleAuthorizationController3::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', RoleAuthorizationController3::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -278,7 +281,7 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser(roles: ['test-role-1', 'test-role-3']);
-        Route::get('test1', RoleAuthorizationController3::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', RoleAuthorizationController3::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -297,8 +300,8 @@ class RoleAuthorizationTest extends TestCase
     public function MultipleRequiredOnClassAndMethod_WhenNotAuthenticated_Unauthorized(): void
     {
         // Arrange
-        Route::get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([AuthorizeMiddleware::class])->name('test1');
-        Route::get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([AuthorizeMiddleware::class])->name('test2');
+        Route::get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([CheckAuthorizationMiddleware::class])->name('test1');
+        Route::get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([CheckAuthorizationMiddleware::class])->name('test2');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -320,8 +323,8 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser();
-        Route::get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([AuthorizeMiddleware::class])->name('test1');
-        Route::get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([AuthorizeMiddleware::class])->name('test2');
+        Route::get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([CheckAuthorizationMiddleware::class])->name('test1');
+        Route::get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([CheckAuthorizationMiddleware::class])->name('test2');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -346,8 +349,8 @@ class RoleAuthorizationTest extends TestCase
             'test-role-1',
             'test-role-2'
         ]);
-        Route::get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([AuthorizeMiddleware::class])->name('test1');
-        Route::get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([AuthorizeMiddleware::class])->name('test2');
+        Route::get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([CheckAuthorizationMiddleware::class])->name('test1');
+        Route::get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([CheckAuthorizationMiddleware::class])->name('test2');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -372,8 +375,8 @@ class RoleAuthorizationTest extends TestCase
             'test-role-1',
             'test-role-3'
         ]);
-        Route::get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([AuthorizeMiddleware::class])->name('test1');
-        Route::get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([AuthorizeMiddleware::class])->name('test2');
+        Route::get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([CheckAuthorizationMiddleware::class])->name('test1');
+        Route::get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([CheckAuthorizationMiddleware::class])->name('test2');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -399,8 +402,8 @@ class RoleAuthorizationTest extends TestCase
             'test-role-2',
             'test-role-3'
         ]);
-        Route::get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([AuthorizeMiddleware::class])->name('test1');
-        Route::get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([AuthorizeMiddleware::class])->name('test2');
+        Route::get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([CheckAuthorizationMiddleware::class])->name('test1');
+        Route::get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([CheckAuthorizationMiddleware::class])->name('test2');
 
         // Act
         /** @var TestResponse[] $responses */

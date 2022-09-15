@@ -2,9 +2,13 @@
 
 namespace Codestage\Authorization\Tests\Feature;
 
-use Codestage\Authorization\Middleware\AuthorizeMiddleware;
+use Codestage\Authorization\Middleware\CheckAuthorizationMiddleware;
 use Codestage\Authorization\Tests\Fakes\Enums\FakePermission;
-use Codestage\Authorization\Tests\Fakes\Http\Controllers\PermissionsAuthorizationTest\{PermissionAuthorizationController1, PermissionAuthorizationController2, PermissionAuthorizationController3, PermissionAuthorizationController4};
+use Codestage\Authorization\Tests\Fakes\Http\Controllers\PermissionsAuthorizationTest\{
+    PermissionAuthorizationController1,
+    PermissionAuthorizationController2,
+    PermissionAuthorizationController3,
+    PermissionAuthorizationController4};
 use Codestage\Authorization\Tests\TestCase;
 use Illuminate\Support\Facades\{Route, URL};
 use Illuminate\Testing\TestResponse;
@@ -21,7 +25,7 @@ class PermissionsAuthorizationTest extends TestCase
     public function OnlyClassGuard_WhenClassRequiresAuthorizationAndNotAuthenticated_Unauthorized(): void
     {
         // Arrange
-        Route::get('test1', PermissionAuthorizationController1::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', PermissionAuthorizationController1::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -41,7 +45,7 @@ class PermissionsAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser();
-        Route::get('test1', PermissionAuthorizationController1::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', PermissionAuthorizationController1::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -61,7 +65,7 @@ class PermissionsAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser([FakePermission::ExamplePermission1]);
-        Route::get('test1', PermissionAuthorizationController1::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', PermissionAuthorizationController1::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -80,7 +84,7 @@ class PermissionsAuthorizationTest extends TestCase
     public function MultipleOptional_WhenClassRequiresAuthorizationAndNotAuthenticated_Unauthorized(): void
     {
         // Arrange
-        Route::get('test1', PermissionAuthorizationController2::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', PermissionAuthorizationController2::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -100,7 +104,7 @@ class PermissionsAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser();
-        Route::get('test1', PermissionAuthorizationController2::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', PermissionAuthorizationController2::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -120,7 +124,7 @@ class PermissionsAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser([FakePermission::ExamplePermission2]);
-        Route::get('test1', PermissionAuthorizationController2::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', PermissionAuthorizationController2::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -140,7 +144,7 @@ class PermissionsAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser([FakePermission::ExamplePermission1]);
-        Route::get('test1', PermissionAuthorizationController2::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', PermissionAuthorizationController2::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -160,7 +164,7 @@ class PermissionsAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser([FakePermission::ExamplePermission3]);
-        Route::get('test1', PermissionAuthorizationController2::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', PermissionAuthorizationController2::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -180,7 +184,7 @@ class PermissionsAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser([FakePermission::ExamplePermission1, FakePermission::ExamplePermission3]);
-        Route::get('test1', PermissionAuthorizationController2::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', PermissionAuthorizationController2::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -199,7 +203,7 @@ class PermissionsAuthorizationTest extends TestCase
     public function MultipleRequired_WhenNotAuthenticated_Unauthorized(): void
     {
         // Arrange
-        Route::get('test1', PermissionAuthorizationController3::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', PermissionAuthorizationController3::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -219,7 +223,7 @@ class PermissionsAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser();
-        Route::get('test1', PermissionAuthorizationController3::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', PermissionAuthorizationController3::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -239,7 +243,7 @@ class PermissionsAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser([FakePermission::ExamplePermission1]);
-        Route::get('test1', PermissionAuthorizationController3::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', PermissionAuthorizationController3::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -259,7 +263,7 @@ class PermissionsAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser([FakePermission::ExamplePermission3]);
-        Route::get('test1', PermissionAuthorizationController3::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', PermissionAuthorizationController3::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -279,7 +283,7 @@ class PermissionsAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser([FakePermission::ExamplePermission1, FakePermission::ExamplePermission3]);
-        Route::get('test1', PermissionAuthorizationController3::class)->middleware([AuthorizeMiddleware::class])->name('test1');
+        Route::get('test1', PermissionAuthorizationController3::class)->middleware([CheckAuthorizationMiddleware::class])->name('test1');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -298,8 +302,8 @@ class PermissionsAuthorizationTest extends TestCase
     public function MultipleRequiredOnClassAndMethod_WhenNotAuthenticated_Unauthorized(): void
     {
         // Arrange
-        Route::get('test1', [PermissionAuthorizationController4::class, 'onlyRequiresClassPermissions'])->middleware([AuthorizeMiddleware::class])->name('test1');
-        Route::get('test2', [PermissionAuthorizationController4::class, 'requiresClassAndMethodPermissions'])->middleware([AuthorizeMiddleware::class])->name('test2');
+        Route::get('test1', [PermissionAuthorizationController4::class, 'onlyRequiresClassPermissions'])->middleware([CheckAuthorizationMiddleware::class])->name('test1');
+        Route::get('test2', [PermissionAuthorizationController4::class, 'requiresClassAndMethodPermissions'])->middleware([CheckAuthorizationMiddleware::class])->name('test2');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -321,8 +325,8 @@ class PermissionsAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser();
-        Route::get('test1', [PermissionAuthorizationController4::class, 'onlyRequiresClassPermissions'])->middleware([AuthorizeMiddleware::class])->name('test1');
-        Route::get('test2', [PermissionAuthorizationController4::class, 'requiresClassAndMethodPermissions'])->middleware([AuthorizeMiddleware::class])->name('test2');
+        Route::get('test1', [PermissionAuthorizationController4::class, 'onlyRequiresClassPermissions'])->middleware([CheckAuthorizationMiddleware::class])->name('test1');
+        Route::get('test2', [PermissionAuthorizationController4::class, 'requiresClassAndMethodPermissions'])->middleware([CheckAuthorizationMiddleware::class])->name('test2');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -347,8 +351,8 @@ class PermissionsAuthorizationTest extends TestCase
             FakePermission::ExamplePermission1,
             FakePermission::ExamplePermission2
         ]);
-        Route::get('test1', [PermissionAuthorizationController4::class, 'onlyRequiresClassPermissions'])->middleware([AuthorizeMiddleware::class])->name('test1');
-        Route::get('test2', [PermissionAuthorizationController4::class, 'requiresClassAndMethodPermissions'])->middleware([AuthorizeMiddleware::class])->name('test2');
+        Route::get('test1', [PermissionAuthorizationController4::class, 'onlyRequiresClassPermissions'])->middleware([CheckAuthorizationMiddleware::class])->name('test1');
+        Route::get('test2', [PermissionAuthorizationController4::class, 'requiresClassAndMethodPermissions'])->middleware([CheckAuthorizationMiddleware::class])->name('test2');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -373,8 +377,8 @@ class PermissionsAuthorizationTest extends TestCase
             FakePermission::ExamplePermission1,
             FakePermission::ExamplePermission3
         ]);
-        Route::get('test1', [PermissionAuthorizationController4::class, 'onlyRequiresClassPermissions'])->middleware([AuthorizeMiddleware::class])->name('test1');
-        Route::get('test2', [PermissionAuthorizationController4::class, 'requiresClassAndMethodPermissions'])->middleware([AuthorizeMiddleware::class])->name('test2');
+        Route::get('test1', [PermissionAuthorizationController4::class, 'onlyRequiresClassPermissions'])->middleware([CheckAuthorizationMiddleware::class])->name('test1');
+        Route::get('test2', [PermissionAuthorizationController4::class, 'requiresClassAndMethodPermissions'])->middleware([CheckAuthorizationMiddleware::class])->name('test2');
 
         // Act
         /** @var TestResponse[] $responses */
@@ -400,8 +404,8 @@ class PermissionsAuthorizationTest extends TestCase
             FakePermission::ExamplePermission2,
             FakePermission::ExamplePermission3
         ]);
-        Route::get('test1', [PermissionAuthorizationController4::class, 'onlyRequiresClassPermissions'])->middleware([AuthorizeMiddleware::class])->name('test1');
-        Route::get('test2', [PermissionAuthorizationController4::class, 'requiresClassAndMethodPermissions'])->middleware([AuthorizeMiddleware::class])->name('test2');
+        Route::get('test1', [PermissionAuthorizationController4::class, 'onlyRequiresClassPermissions'])->middleware([CheckAuthorizationMiddleware::class])->name('test1');
+        Route::get('test2', [PermissionAuthorizationController4::class, 'requiresClassAndMethodPermissions'])->middleware([CheckAuthorizationMiddleware::class])->name('test2');
 
         // Act
         /** @var TestResponse[] $responses */
