@@ -33,7 +33,7 @@ class InstallCommand extends Command
     public function handle(): int
     {
         // Publish authorization
-        $this->call('vendor:publish --tag=configuration --provider=' . AuthorizationServiceProvider::class);
+        $this->call('php artisan vendor:publish --tag=configuration --provider=' . AuthorizationServiceProvider::class);
 
         // Create the permissions enum
         if ($this->createPermissionEnum()) {
@@ -55,7 +55,7 @@ class InstallCommand extends Command
 
         // Ask the user whether they want to run migrations now
         if ($this->confirm('Do you want to run migrations now?', true)) {
-            $this->call('migrate');
+            $this->call('php artisan migrate');
         }
 
         return BaseCommand::SUCCESS;
