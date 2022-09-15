@@ -13,5 +13,7 @@
             "email": "marincalin2551@hotmail.com"
         }
     ],
-    "require": {}
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.11"
+    }
 }
