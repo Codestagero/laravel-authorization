@@ -1,7 +1,5 @@
 <?php
 
-use Codestage\Authorization\Contracts\IPermissionEnum;
-
 return [
 
     /*
@@ -13,5 +11,5 @@ return [
     | MUST implement Codestage\Authorization\Contracts\IPermissionEnum.
     |
     */
-    'permissions_enum' => IPermissionEnum::class
+    'permissions_enum' => Codestage\Authorization\Contracts\IPermissionEnum::class
 ];

@@ -2,6 +2,7 @@
 
 namespace Codestage\Authorization\Providers;
 
+use Codestage\Authorization\Console\Commands\InstallCommand;
 use Codestage\Authorization\Contracts\ITraitService;
 use Codestage\Authorization\Services\TraitService;
 use Illuminate\Support\ServiceProvider;
@@ -27,6 +28,9 @@ class AuthorizationServiceProvider extends ServiceProvider
         // Publish migrations
         $this->publishes([
             __DIR__ . '/../../config/authorization.php' => $this->app->configPath('authorization.php'),
+        ], 'configuration');
+
+        $this->publishes([
             __DIR__ . '/../../database/migrations' => $this->app->databasePath('migrations'),
         ]);
 
@@ -38,5 +42,21 @@ class AuthorizationServiceProvider extends ServiceProvider
 
         // Register migrations
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+
+        // Register commands
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                // Installation
+                InstallCommand::class
+            ]);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function provides(): array
+    {
+        return array_keys($this->bindings);
     }
 }
