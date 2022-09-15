@@ -178,7 +178,7 @@ class InstallCommand extends Command
         foreach ($groups as $group => $groupMiddleware) {
             if (!in_array(CheckAuthorizationMiddleware::class, $groupMiddleware)) {
                 $newFileContents = preg_replace(
-                    '([\'"]' . $group . '[\'"] => \[[a-zA-Z0-9\s:,/\'"]+?)((?:\w|\)+)?SubstituteBindings::class)',
+                    '/([\'"]' . $group . '[\'"] => \[[a-zA-Z0-9\s:,/\'"]+?)((?:\w|\)+)?SubstituteBindings::class)/mg',
                     '$1' . CheckAuthorizationMiddleware::class . ',\n\t$2',
                     $newFileContents
                 );
