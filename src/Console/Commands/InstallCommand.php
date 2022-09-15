@@ -168,7 +168,7 @@ class InstallCommand extends Command
             return false;
         }
 
-        $groups = $reflection->getProperty('middlewareGroups')->getValue();
+        $groups = $reflection->getProperty('middlewareGroups')->getDefaultValue();
 
         if (!is_array($groups)) {
             return false;
