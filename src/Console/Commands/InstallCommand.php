@@ -75,8 +75,8 @@ class InstallCommand extends Command
 
         // If a file by that name already exists, ask the user whether to overwrite it
         if (file_exists($path)) {
-            if ($this->confirm('It seems a file with the name of ' . self::PermissionEnumPath . 'already exists. Do you wish to overwrite it?', true)) {
-                if (!unlink(unlink($path))) {
+            if ($this->confirm('It seems a file with the name of ' . self::PermissionEnumPath . ' already exists. Do you wish to overwrite it?', true)) {
+                if (!unlink($path)) {
                     $this->output->error('File could not be deleted! Delete it manually and try again.');
                 }
             } else {
