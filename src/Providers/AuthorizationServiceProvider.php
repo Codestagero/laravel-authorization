@@ -4,6 +4,8 @@ namespace Codestage\Authorization\Providers;
 
 use Codestage\Authorization\Console\Commands\InstallCommand;
 use Codestage\Authorization\Console\Commands\MakePolicyCommand;
+use Codestage\Authorization\Console\Commands\MakeRequirementCommand;
+use Codestage\Authorization\Console\Commands\MakeRequirementHandlerCommand;
 use Codestage\Authorization\Contracts\Services\{IAuthorizationService, IPolicyService};
 use Codestage\Authorization\Services\{AuthorizationService, PolicyService};
 use Illuminate\Foundation\Console\PolicyMakeCommand as BaseMakePolicyCommand;
@@ -54,6 +56,8 @@ class AuthorizationServiceProvider extends ServiceProvider
 
                 // Make
                 MakePolicyCommand::class,
+                MakeRequirementCommand::class,
+                MakeRequirementHandlerCommand::class,
             ]);
 
             // Override the base make:policy command
