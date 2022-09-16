@@ -25,9 +25,15 @@ class MakeRequirementCommand extends GeneratorCommand
      */
     public function handle(): ?bool
     {
-        return parent::handle() && $this->call(MakeRequirementHandlerCommand::class, [
-            'requirement' => $this->getNameInput()
-        ]);
+        if (parent::handle() !== false) {
+            $this->call(MakeRequirementHandlerCommand::class, [
+                'requirement' => $this->getNameInput()
+            ]);
+        } else {
+            return false;
+        }
+
+        return null;
     }
 
     /**
@@ -115,7 +121,7 @@ class MakeRequirementCommand extends GeneratorCommand
         foreach ($searches as $search) {
             $stub = str_replace(
                 $search,
-                [$this->getNameInput(), $this->rootNamespace() . '\\Authorization\\Handlers\\' . $this->getHandlerInput()],
+                [$this->getHandlerInput(), $this->rootNamespace() . 'Authorization\\Handlers\\' . $this->getHandlerInput()],
                 $stub
             );
         }

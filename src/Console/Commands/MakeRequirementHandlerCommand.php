@@ -15,7 +15,7 @@ class MakeRequirementHandlerCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $type = 'Requirement Handler';
+    protected $type = 'Requirement handler';
 
     /**
      * Get the stub file for the generator.
@@ -67,7 +67,12 @@ class MakeRequirementHandlerCommand extends GeneratorCommand
     protected function getNameInput(): string
     {
         $requirementName = trim($this->argument('requirement'));
-        return $requirementName . 'Handler';
+
+        if (!str_ends_with($requirementName, 'Handler')) {
+            $requirementName .= 'Handler';
+        }
+
+        return $requirementName;
     }
 
     /**
@@ -101,9 +106,9 @@ class MakeRequirementHandlerCommand extends GeneratorCommand
     protected function replaceRequirement(string &$stub): static
     {
         $searches = [
-            ['DummyRequirement', 'NamespacedDummyRequirement'],
-            ['{{ requirement }}', '{{ namespacedRequirement }}'],
-            ['{{requirement}}', '{{namespacedRequirement}}'],
+            ['NamespacedDummyRequirement', 'DummyRequirement'],
+            ['{{ namespacedRequirement }}', '{{ requirement }}'],
+            ['{{namespacedRequirement}}', '{{requirement}}'],
         ];
 
         $requirementName = $this->getRequirementInput();
@@ -111,7 +116,7 @@ class MakeRequirementHandlerCommand extends GeneratorCommand
         foreach ($searches as $search) {
             $stub = str_replace(
                 $search,
-                [$requirementName, $this->rootNamespace() . '\\Authorization\\Requirements\\' . $requirementName],
+                [$this->rootNamespace() . '\\Authorization\\Requirements\\' . $requirementName, $requirementName],
                 $stub
             );
         }
