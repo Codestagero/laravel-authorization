@@ -5,29 +5,15 @@ namespace Codestage\Authorization\Console\Commands;
 use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
 
-#[AsCommand(name: 'make:policy')]
+#[AsCommand(name: 'make:policy', description: 'Create a new policy class')]
 class MakePolicyCommand extends GeneratorCommand
 {
-    /**
-     * The console command name.
-     *
-     * @var string
-     */
-    protected $name = 'make:policy';
-
     /**
      * The type of class being generated.
      *
      * @var string
      */
     protected $type = 'Resource';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Create a new policy class';
 
     /**
      * Get the stub file for the generator.

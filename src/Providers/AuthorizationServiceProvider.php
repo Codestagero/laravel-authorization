@@ -6,6 +6,7 @@ use Codestage\Authorization\Console\Commands\InstallCommand;
 use Codestage\Authorization\Console\Commands\MakePolicyCommand;
 use Codestage\Authorization\Contracts\Services\{IAuthorizationService, IPolicyService};
 use Codestage\Authorization\Services\{AuthorizationService, PolicyService};
+use Illuminate\Foundation\Console\PolicyMakeCommand as BaseMakePolicyCommand;
 use Illuminate\Support\ServiceProvider;
 
 class AuthorizationServiceProvider extends ServiceProvider
@@ -54,6 +55,9 @@ class AuthorizationServiceProvider extends ServiceProvider
                 // Make
                 MakePolicyCommand::class,
             ]);
+
+            // Override the base make:policy command
+            $this->app->extend(BaseMakePolicyCommand::class, fn () => $this->app->make(MakePolicyCommand::class));
         }
     }
 
