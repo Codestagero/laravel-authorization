@@ -25,6 +25,7 @@ class UserRole extends Model
      */
     protected $primaryKey = [
         'role_id',
+        'user_type',
         'user_id'
     ];
 

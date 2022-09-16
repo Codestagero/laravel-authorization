@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
-            $table->primary(['user_id', 'role_id']);
+            $table->primary(['user_type', 'user_id', 'role_id']);
         });
     }
 
