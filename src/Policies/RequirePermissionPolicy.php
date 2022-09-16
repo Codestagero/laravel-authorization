@@ -1,9 +1,9 @@
 <?php
 
-namespace Codestage\Authorization\Authorization\Policies;
+namespace Codestage\Authorization\Policies;
 
-use Codestage\Authorization\Authorization\Requirements\HasPermissionRequirement;
 use Codestage\Authorization\Contracts\{IPermissionEnum, IPolicy, IRequirement};
+use Codestage\Authorization\Requirements\HasPermissionRequirement;
 
 class RequirePermissionPolicy implements IPolicy
 {

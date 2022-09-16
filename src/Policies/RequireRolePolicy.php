@@ -1,9 +1,9 @@
 <?php
 
-namespace Codestage\Authorization\Authorization\Policies;
+namespace Codestage\Authorization\Policies;
 
-use Codestage\Authorization\Authorization\Requirements\HasRoleRequirement;
 use Codestage\Authorization\Contracts\{IPolicy, IRequirement};
+use Codestage\Authorization\Requirements\HasRoleRequirement;
 
 class RequireRolePolicy implements IPolicy
 {

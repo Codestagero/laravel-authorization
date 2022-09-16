@@ -1,10 +1,10 @@
 <?php
 
-namespace Codestage\Authorization\Authorization\Requirements;
+namespace Codestage\Authorization\Requirements;
 
 use Codestage\Authorization\Attributes\HandledBy;
-use Codestage\Authorization\Authorization\Handlers\HasPermissionRequirementHandler;
 use Codestage\Authorization\Contracts\{IPermissionEnum, IRequirement};
+use Codestage\Authorization\Handlers\HasPermissionRequirementHandler;
 
 #[HandledBy(HasPermissionRequirementHandler::class)]
 class HasPermissionRequirement implements IRequirement

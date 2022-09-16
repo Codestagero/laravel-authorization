@@ -3,8 +3,8 @@
 namespace Codestage\Authorization\Attributes;
 
 use Attribute;
-use Codestage\Authorization\Authorization\Policies\RequirePermissionPolicy;
 use Codestage\Authorization\Contracts\IPermissionEnum;
+use Codestage\Authorization\Policies\RequirePermissionPolicy;
 
 #[Attribute(
     Attribute::IS_REPEATABLE | Attribute::TARGET_CLASS | Attribute::TARGET_FUNCTION | Attribute::TARGET_METHOD

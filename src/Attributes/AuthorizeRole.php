@@ -3,7 +3,7 @@
 namespace Codestage\Authorization\Attributes;
 
 use Attribute;
-use Codestage\Authorization\Authorization\Policies\RequireRolePolicy;
+use Codestage\Authorization\Policies\RequireRolePolicy;
 
 #[Attribute(
     Attribute::IS_REPEATABLE | Attribute::TARGET_CLASS | Attribute::TARGET_FUNCTION | Attribute::TARGET_METHOD

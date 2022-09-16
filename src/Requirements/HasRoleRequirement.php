@@ -1,10 +1,10 @@
 <?php
 
-namespace Codestage\Authorization\Authorization\Requirements;
+namespace Codestage\Authorization\Requirements;
 
 use Codestage\Authorization\Attributes\HandledBy;
-use Codestage\Authorization\Authorization\Handlers\HasRoleRequirementHandler;
 use Codestage\Authorization\Contracts\IRequirement;
+use Codestage\Authorization\Handlers\HasRoleRequirementHandler;
 
 #[HandledBy(HasRoleRequirementHandler::class)]
 class HasRoleRequirement implements IRequirement
