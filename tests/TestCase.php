@@ -6,7 +6,7 @@ use Codestage\Authorization\Contracts\IPermissionEnum;
 use Codestage\Authorization\Models\{Role, RolePermission, UserRole};
 use Codestage\Authorization\Providers\AuthorizationServiceProvider;
 use Codestage\Authorization\Tests\Fakes\Enums\FakePermission;
-use Codestage\Authorization\Traits\HasPermissions;
+use Codestage\Authorization\Tests\Fakes\Models\User;
 use Illuminate\Config\Repository;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -46,12 +46,14 @@ abstract class TestCase extends OrchestraTestCase
         $configRepository = $this->app->make(Repository::class);
         $configRepository->set('authorization.permissions_enum', FakePermission::class);
 
-        // Refresh the database
-        $this->refreshDatabase();
-
-        // Create a fake users table
+        // Create a fake table
         Schema::create('users', function (Blueprint $table): void {
             $table->id();
+            $table->timestamps();
+        });
+        Schema::create('user_profiles', function (Blueprint $table): void {
+            $table->id();
+            $table->foreignIdFor(User::class);
             $table->timestamps();
         });
     }
@@ -74,12 +76,7 @@ abstract class TestCase extends OrchestraTestCase
     protected function authenticateUser(iterable $permissions = [], iterable $roles = []): Authenticatable
     {
         // Create the user
-        $user = new class extends Authenticatable {
-            use HasPermissions;
-
-            protected $table = 'users';
-        };
-        $user->save();
+        $user = User::query()->create();
 
         // Authenticate as this user
         Auth::login($user);
