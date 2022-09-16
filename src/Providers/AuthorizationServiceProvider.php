@@ -3,6 +3,7 @@
 namespace Codestage\Authorization\Providers;
 
 use Codestage\Authorization\Console\Commands\InstallCommand;
+use Codestage\Authorization\Console\Commands\MakePolicyCommand;
 use Codestage\Authorization\Contracts\Services\{IAuthorizationService, IPolicyService};
 use Codestage\Authorization\Services\{AuthorizationService, PolicyService};
 use Illuminate\Support\ServiceProvider;
@@ -48,7 +49,10 @@ class AuthorizationServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 // Installation
-                InstallCommand::class
+                InstallCommand::class,
+
+                // Make
+                MakePolicyCommand::class,
             ]);
         }
     }
