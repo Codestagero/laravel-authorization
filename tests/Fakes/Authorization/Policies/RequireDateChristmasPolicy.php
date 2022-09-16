@@ -8,7 +8,6 @@ use Codestage\Authorization\Tests\Fakes\Authorization\Requirement\DateRequiremen
 
 class RequireDateChristmasPolicy implements IPolicy
 {
-
     /**
      * @inheritDoc
      */
