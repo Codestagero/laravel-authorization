@@ -4,15 +4,24 @@ namespace Codestage\Authorization\Services;
 
 use Closure;
 use Codestage\Authorization\Attributes\{AllowAnonymous, Authorize};
-use Codestage\Authorization\Contracts\{IPermissionEnum, ITraitService};
+use Codestage\Authorization\Authorization\Requirements\HasPermissionRequirement;
+use Codestage\Authorization\Authorization\Requirements\HasRoleRequirement;
+use Codestage\Authorization\Contracts\{IPermissionEnum,
+    IPolicy,
+    IRequirement,
+    Services\IPolicyService,
+    Services\ITraitService};
 use Codestage\Authorization\Traits\HasPermissions;
 use Illuminate\Contracts\Auth\Guard as AuthManager;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
+use function in_array;
+use function is_array;
 
 /**
  * @internal
@@ -31,8 +40,9 @@ class TraitService implements ITraitService
      * TraitService constructor method.
      *
      * @param AuthManager $authManager
+     * @param IPolicyService $policyService
      */
-    public function __construct(private readonly AuthManager $authManager)
+    public function __construct(private readonly AuthManager $authManager, private readonly IPolicyService $policyService)
     {
     }
 
@@ -48,7 +58,7 @@ class TraitService implements ITraitService
         $method = $reflectionClass->getMethod($methodName);
 
         return (new Collection($method->getAttributes()))
-            ->filter(fn (ReflectionAttribute $attribute) => \in_array($attribute->getName(), self::AuthorizationAttributes));
+            ->filter(fn (ReflectionAttribute $attribute) => in_array($attribute->getName(), self::AuthorizationAttributes));
     }
 
     /**
@@ -61,7 +71,7 @@ class TraitService implements ITraitService
         $reflectionClass = new ReflectionClass($className);
 
         return (new Collection($reflectionClass->getAttributes()))
-            ->filter(fn (ReflectionAttribute $attribute) => \in_array($attribute->getName(), self::AuthorizationAttributes));
+            ->filter(fn (ReflectionAttribute $attribute) => in_array($attribute->getName(), self::AuthorizationAttributes));
     }
 
     /**
@@ -92,19 +102,20 @@ class TraitService implements ITraitService
         $reflectionFunction = new ReflectionFunction($closure);
 
         return (new Collection($reflectionFunction->getAttributes()))
-            ->filter(fn (ReflectionAttribute $attribute) => \in_array($attribute->getName(), self::AuthorizationAttributes));
+            ->filter(fn (ReflectionAttribute $attribute) => in_array($attribute->getName(), self::AuthorizationAttributes));
     }
 
     /**
      * Check whether an action can be accessed when guarded by the given traits.
      *
      * @param Collection<ReflectionAttribute>|ReflectionAttribute[] $traits
+     * @throws BindingResolutionException
      * @return bool
      */
     private function canAccessThroughTraits(Collection|array $traits): bool
     {
         // Make sure the traits are a Collection
-        if (\is_array($traits)) {
+        if (is_array($traits)) {
             $traits = new Collection($traits);
         }
 
@@ -127,29 +138,11 @@ class TraitService implements ITraitService
             // Loop through traits and make sure all of them pass
             $authorizationTraits = $traits->filter(fn (ReflectionAttribute $attribute) => $attribute->getName() === Authorize::class);
 
-            /** @var ReflectionAttribute $trait */
-            foreach ($authorizationTraits as $trait) {
-                /** @var Collection $constraints */
-                $constraints = (new Collection($trait->getArguments()))->flatten();
+            /** @var ReflectionAttribute<Authorize> $traitReflection */
+            foreach ($authorizationTraits as $traitReflection) {
+                $trait = $traitReflection->newInstance();
 
-                // Check if none of the attributes are passing
-                $fails = $constraints->isNotEmpty() && $constraints->doesntContain(function (mixed $constraint) use ($user) {
-                    // Check for permission constraints
-                    if ($constraint instanceof IPermissionEnum) {
-                        return $user->hasPermission($constraint);
-                    }
-
-                    // Check for role constraints
-                    if (\is_string($constraint)) {
-                        return $user->hasRole($constraint);
-                    }
-
-                    // If not recognized, don't take into account
-                    return false;
-                });
-
-                // If checks failed, return false
-                if ($fails) {
+                if (!$this->checkTraitFails($trait)) {
                     return false;
                 }
             }
@@ -159,10 +152,87 @@ class TraitService implements ITraitService
     }
 
     /**
+     * Check if requirements defined by the given trait pass in the current context.
+     *
+     * @param Authorize $trait
+     * @throws BindingResolutionException
+     * @return bool
+     */
+    private function checkTraitFails(Authorize $trait): bool
+    {
+        $computedPolicies = new Collection($trait->policies ?? []);
+
+        // If this trait has permission requirements, add them to the computed policies list
+        if ($trait->permissions) {
+            if (!is_array($trait->permissions)) {
+                $trait->permissions = [$trait->permissions];
+            }
+
+            // Add a new policy that requires the permissions
+            $computedPolicies->prepend(new class ($trait->permissions) implements IPolicy {
+                /**
+                 * @param IPermissionEnum[] $permissions
+                 */
+                public function __construct(private readonly array $permissions)
+                {
+                }
+
+                /**
+                 * The list of requirements that need to be fulfilled in order to complete this policy.
+                 *
+                 * @return array<int, IRequirement>
+                 */
+                public function requirements(): array
+                {
+                    return [new HasPermissionRequirement($this->permissions)];
+                }
+            });
+        }
+
+        // If this trait has role requirements, add them to the computed policies list
+        if ($trait->roles) {
+            if (!is_array($trait->roles)) {
+                $trait->roles = [$trait->roles];
+            }
+
+            // Add a new policy that requires the roles
+            $computedPolicies->prepend(new class ($trait->roles) implements IPolicy {
+                /**
+                 * @param string[] $roles
+                 */
+                public function __construct(private readonly array $roles)
+                {
+                }
+
+                /**
+                 * The list of requirements that need to be fulfilled in order to complete this policy.
+                 *
+                 * @return array<int, IRequirement>
+                 */
+                public function requirements(): array
+                {
+                    return [new HasRoleRequirement($this->roles)];
+                }
+            });
+        }
+
+        // Run the computed policies
+        foreach ($computedPolicies as $policy) {
+            if ($this->policyService->runPolicy($policy)) {
+                return true;
+            }
+        }
+
+        // If no requirement passes, return true only if this trait doesn't define any requirements
+        return !$trait->policies && !$trait->roles && !$trait->permissions;
+    }
+
+    /**
      * Check whether the given controller method can be accessed in the current request context.
      *
      * @param class-string $className
      * @param class-string $methodName
+     * @throws BindingResolutionException
      * @throws ReflectionException
      * @return bool
      */
@@ -177,6 +247,7 @@ class TraitService implements ITraitService
      * Check whether the given controller method can be accessed in the current request context.
      *
      * @param Closure $closure
+     * @throws BindingResolutionException
      * @throws ReflectionException
      * @return bool
      */

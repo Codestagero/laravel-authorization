@@ -15,10 +15,12 @@ class Authorize
      *
      * @param IPermissionEnum|IPermissionEnum[]|null $permissions
      * @param string|string[]|null $roles
+     * @param class-string|class-string[]|null $policies
      */
     public function __construct(
         public IPermissionEnum|array|null $permissions = null,
-        public string|array|null $roles = null
+        public string|array|null $roles = null,
+        public string|array|null $policies = null
     ) {
     }
 }

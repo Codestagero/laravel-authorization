@@ -3,7 +3,7 @@
 namespace Codestage\Authorization\Middleware;
 
 use Closure;
-use Codestage\Authorization\Contracts\ITraitService;
+use Codestage\Authorization\Contracts\Services\ITraitService;
 use Illuminate\Http\Request;
 use ReflectionException;
 use Throwable;
