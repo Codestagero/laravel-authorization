@@ -8,7 +8,7 @@ use Codestage\Authorization\Contracts\IRequirement;
 class DummyClass implements IPolicy
 {
     /**
-     * ExamplePolicy constructor method.
+     * DummyClass constructor method.
      */
     public function __construct()
     {
