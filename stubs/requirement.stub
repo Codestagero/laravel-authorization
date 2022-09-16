@@ -4,7 +4,7 @@ namespace DummyNamespace;
 
 use Codestage\Authorization\Attributes\HandledBy;
 use Codestage\Authorization\Contracts\IRequirement;
-use DummyNamespacedRequirementHandler;
+use NamespacedDummyRequirementHandler;
 
 #[HandledBy(DummyRequirementHandler::class)]
 class DummyClass implements IRequirement

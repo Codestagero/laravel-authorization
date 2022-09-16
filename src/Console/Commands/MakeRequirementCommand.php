@@ -25,9 +25,15 @@ class MakeRequirementCommand extends GeneratorCommand
      */
     public function handle(): ?bool
     {
-        return parent::handle() && $this->call(MakeRequirementHandlerCommand::class, [
-            'requirement' => $this->getNameInput()
-        ]);
+        if (parent::handle() !== false) {
+            $this->call(MakeRequirementHandlerCommand::class, [
+                'requirement' => $this->getNameInput()
+            ]);
+        } else {
+            return false;
+        }
+
+        return null;
     }
 
     /**
@@ -107,15 +113,15 @@ class MakeRequirementCommand extends GeneratorCommand
     protected function replaceRequirementHandler(string &$stub): static
     {
         $searches = [
-            ['DummyRequirementHandler', 'DummyNamespacedRequirementHandler'],
-            ['{{ requirementHandler }}', '{{ namespacedRequirementHandler }}'],
-            ['{{requirementHandler}}', '{{namespacedRequirementHandler}}'],
+            ['NamespacedDummyRequirementHandler', 'DummyRequirementHandler'],
+            ['{{ namespacedRequirementHandler }}', '{{ requirementHandler }}'],
+            ['{{namespacedRequirementHandler}}', '{{requirementHandler}}'],
         ];
 
         foreach ($searches as $search) {
             $stub = str_replace(
                 $search,
-                [$this->getNameInput(), $this->rootNamespace() . '\\Authorization\\Handlers\\' . $this->getHandlerInput()],
+                [$this->rootNamespace() . 'Authorization\\Handlers\\' . $this->getHandlerInput(), $this->getHandlerInput()],
                 $stub
             );
         }
