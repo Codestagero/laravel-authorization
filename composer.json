@@ -26,7 +26,10 @@
     },
     "require": {
         "illuminate/support": "^9.30",
-        "illuminate/database": "^9.30"
+        "illuminate/database": "^9.30",
+        "illuminate/contracts": "^9.30",
+        "illuminate/console": "^9.30",
+        "illuminate/http": "^9.30"
     },
     "extra": {
         "laravel": {

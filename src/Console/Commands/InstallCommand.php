@@ -54,9 +54,36 @@ class InstallCommand extends Command
             $this->output->info('You can set the enum you intend to use for permissions inside config/authorization.php');
         }
 
+        // Create the authorization namespaces
+        if (!is_dir($this->laravel->basePath('app/Authorization'))) {
+            mkdir($this->laravel->basePath('app/Authorization'));
+        }
+        if (!is_dir($this->laravel->basePath('app/Authorization/Handlers'))) {
+            mkdir($this->laravel->basePath('app/Authorization/Handlers'));
+        }
+        if (!is_dir($this->laravel->basePath('app/Authorization/Policies'))) {
+            mkdir($this->laravel->basePath('app/Authorization/Policies'));
+        }
+        if (!is_dir($this->laravel->basePath('app/Authorization/Requirements'))) {
+            mkdir($this->laravel->basePath('app/Authorization/Requirements'));
+        }
+
         // Ask the user whether they want to run migrations now
         if ($this->confirm('Do you want to run migrations now?', true)) {
             $this->call('migrate');
+        }
+
+        // Check whether the user has default laravel policies and warn them if they do
+        $defaultPoliciesPath = $this->laravel->basePath('app/Policies');
+        if (is_dir($defaultPoliciesPath)) {
+            if ($this->checkDirectoryEmpty($defaultPoliciesPath)) {
+                unlink($defaultPoliciesPath);
+            } else {
+                $this->output->warning([
+                    'It seems like you are using Laravel policies as well in your project.',
+                    'We recommend migrating them to the policy-based authorization this package provides.'
+                ]);
+            }
         }
 
         return BaseCommand::SUCCESS;
@@ -90,5 +117,24 @@ class InstallCommand extends Command
 
         // Publish the stub
         return file_put_contents($path, $stub) !== false;
+    }
+
+    /**
+     * Check if the given directory is empty.
+     *
+     * @param string $directory
+     * @return bool
+     */
+    private function checkDirectoryEmpty(string $directory): bool
+    {
+        $handle = opendir($directory);
+        while (($entry = readdir($handle)) !== false) {
+            if ($entry !== "." && $entry !== "..") {
+                closedir($handle);
+                return false;
+            }
+        }
+        closedir($handle);
+        return true;
     }
 }
