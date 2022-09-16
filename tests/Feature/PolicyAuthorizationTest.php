@@ -5,6 +5,9 @@ namespace Codestage\Authorization\Tests\Feature;
 use Carbon\Carbon;
 use Codestage\Authorization\Middleware\AuthorizationMiddleware;
 use Codestage\Authorization\Tests\Fakes\Http\Controllers\PolicyAuthorizationTest\PolicyAuthorizationTestController1;
+use Codestage\Authorization\Tests\Fakes\Http\Controllers\PolicyAuthorizationTest\PolicyAuthorizationTestController2;
+use Codestage\Authorization\Tests\Fakes\Models\User;
+use Codestage\Authorization\Tests\Fakes\Models\UserProfile;
 use Codestage\Authorization\Tests\TestCase;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
@@ -67,6 +70,53 @@ class PolicyAuthorizationTest extends TestCase
         /** @var TestResponse[] $responses */
         $responses = [
             $this->getJson(URL::route('test1')),
+        ];
+
+        // Assert
+        $responses[0]->assertSuccessful();
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function PolicyWithRouteDependency_WhenDependencyDoesNotExist_Forbidden(): void
+    {
+        // Arrange
+        $this->authenticateUser();
+        Route::get('test1/{profile}', PolicyAuthorizationTestController2::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+
+        // Act
+        /** @var TestResponse[] $responses */
+        $responses = [
+            $this->getJson(URL::route('test1', [
+                'profile' => $this->faker->slug()
+            ])),
+        ];
+
+        // Assert
+        $responses[0]->assertForbidden();
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function PolicyWithRouteDependency_WhenDependencyFound_Success(): void
+    {
+        // Arrange
+        $this->authenticateUser();
+        Route::get('test1/{profile}', PolicyAuthorizationTestController2::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        $profile = UserProfile::query()->create([
+            'user_id' => User::query()->create()->getKey()
+        ]);
+
+        // Act
+        /** @var TestResponse[] $responses */
+        $responses = [
+            $this->getJson(URL::route('test1', [
+                'profile' => $profile->getRouteKey()
+            ])),
         ];
 
         // Assert

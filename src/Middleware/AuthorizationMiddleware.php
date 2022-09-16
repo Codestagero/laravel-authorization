@@ -5,6 +5,7 @@ namespace Codestage\Authorization\Middleware;
 use Closure;
 use Codestage\Authorization\Contracts\Services\IAuthorizationService;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Request;
 use ReflectionException;
 use Throwable;
@@ -23,7 +24,9 @@ class AuthorizationMiddleware
      *
      * @param Request $request
      * @param Closure $next
+     * @throws AuthorizationException
      * @throws ReflectionException
+     * @throws BindingResolutionException
      * @return mixed
      */
     public function handle(Request $request, Closure $next): mixed
