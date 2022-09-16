@@ -6,6 +6,7 @@ use Closure;
 use Codestage\Authorization\Attributes\{AllowAnonymous, Authorize};
 use Codestage\Authorization\Contracts\{Services\IAuthorizationService, Services\IPolicyService};
 use Codestage\Authorization\Traits\HasPermissions;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Auth\Guard as AuthManager;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,11 @@ use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
+use function count;
+use function get_class;
+use function in_array;
+use function is_array;
+use function is_string;
 
 /**
  * @internal
@@ -46,7 +52,7 @@ class AuthorizationService implements IAuthorizationService
      */
     private function isAuthorizationAttribute(object|string $class): bool
     {
-        $className = \is_string($class) ? $class : \get_class($class);
+        $className = is_string($class) ? $class : get_class($class);
 
         foreach (self::AuthorizationAttributes as $attribute) {
             if (is_subclass_of($className, $attribute) || $className === $attribute) {
@@ -113,7 +119,7 @@ class AuthorizationService implements IAuthorizationService
         $reflectionFunction = new ReflectionFunction($closure);
 
         return (new Collection($reflectionFunction->getAttributes()))
-            ->filter(fn (ReflectionAttribute $attribute) => \in_array($attribute->getName(), self::AuthorizationAttributes));
+            ->filter(fn (ReflectionAttribute $attribute) => in_array($attribute->getName(), self::AuthorizationAttributes));
     }
 
     /**
@@ -126,7 +132,7 @@ class AuthorizationService implements IAuthorizationService
     private function canAccessThroughAttributes(Collection|array $attributes): bool
     {
         // Make sure the attributes are a Collection
-        if (\is_array($attributes)) {
+        if (is_array($attributes)) {
             $attributes = new Collection($attributes);
         }
 
@@ -149,7 +155,7 @@ class AuthorizationService implements IAuthorizationService
 
             // If the user is not authenticated, no other checks can be performed
             if (!$user) {
-                return abort(401);
+                throw new AuthenticationException();
             }
 
             // Loop through authorization attributes and make sure that every one of them passes
@@ -169,7 +175,7 @@ class AuthorizationService implements IAuthorizationService
     private function checkAttributePasses(Authorize $attribute): bool
     {
         // If no policies are provided, no checks can fail
-        if (!$attribute->policies || (\is_array($attribute->policies) && \count($attribute->policies) === 0)) {
+        if (!$attribute->policies || (is_array($attribute->policies) && count($attribute->policies) === 0)) {
             return true;
         }
 

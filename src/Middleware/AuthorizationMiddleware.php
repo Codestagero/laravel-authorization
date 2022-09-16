@@ -4,6 +4,7 @@ namespace Codestage\Authorization\Middleware;
 
 use Closure;
 use Codestage\Authorization\Contracts\Services\IAuthorizationService;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use ReflectionException;
 use Throwable;
@@ -39,14 +40,14 @@ class AuthorizationMiddleware
                 }
 
                 if (!$this->traitService->canAccessControllerMethod($controller, $method)) {
-                    abort(403);
+                    throw new AuthorizationException();
                 }
             }
 
             // If the request is made to an action inside a Closure
             if ($request->route()->getAction('uses') instanceof Closure) {
                 if (!$this->traitService->canAccessClosure($request->route()->getAction('uses'))) {
-                    abort(403);
+                    throw new AuthorizationException();
                 }
             }
         }
