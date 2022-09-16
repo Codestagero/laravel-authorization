@@ -2,7 +2,7 @@
 
 namespace Codestage\Authorization\Console\Commands;
 
-use Codestage\Authorization\Middleware\CheckAuthorizationMiddleware;
+use Codestage\Authorization\Middleware\AuthorizationMiddleware;
 use Codestage\Authorization\Providers\AuthorizationServiceProvider;
 use Error;
 use Illuminate\Console\Command;
@@ -203,14 +203,14 @@ class InstallCommand extends Command
         }
 
         // Build the middleware class' FQN
-        $middlewareQualifiedName = CheckAuthorizationMiddleware::class;
+        $middlewareQualifiedName = AuthorizationMiddleware::class;
         if (!str_starts_with($middlewareQualifiedName, '\\')) {
             $middlewareQualifiedName = '\\' . $middlewareQualifiedName;
         }
 
         // Add the middleware to each group
         foreach ($groups as $group => $groupMiddleware) {
-            if (!in_array(CheckAuthorizationMiddleware::class, $groupMiddleware)) {
+            if (!in_array(AuthorizationMiddleware::class, $groupMiddleware)) {
                 $newFileContents = preg_replace(
                     '/([\'"]' . $group . '[\'"] => \\[[a-zA-Z\\s:,\\/\\\\\'\"]+?)([ \\t]+)((?:(?:\\w|\\\\)+)?SubstituteBindings::class)/m',
                     '$1$2' . $middlewareQualifiedName . "::class,\n$2$3",
