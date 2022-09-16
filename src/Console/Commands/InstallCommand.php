@@ -49,6 +49,7 @@ class InstallCommand extends Command
             self::PermissionEnumNamespace . '\Permission',
             $configurationContents
         );
+
         if (file_put_contents($this->laravel->configPath('authorization.php'), $configurationContents) === false) {
             $this->output->info('You can set the enum you intend to use for permissions inside config/authorization.php');
         }

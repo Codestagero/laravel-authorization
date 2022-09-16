@@ -2,7 +2,6 @@
 
 namespace Codestage\Authorization\Contracts\Services;
 
-use Codestage\Authorization\Contracts\IPolicy;
 use Illuminate\Contracts\Container\BindingResolutionException;
 
 /**
@@ -13,9 +12,10 @@ interface IPolicyService
     /**
      * Run the given policy.
      *
-     * @param class-string|IPolicy $policy
+     * @param class-string $policy
+     * @param array<string, mixed> $parameters
      * @throws BindingResolutionException
      * @return bool
      */
-    public function runPolicy(string|IPolicy $policy): bool;
+    public function runPolicy(string $policy, array $parameters = []): bool;
 }

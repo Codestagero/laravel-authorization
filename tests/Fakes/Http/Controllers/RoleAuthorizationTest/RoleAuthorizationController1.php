@@ -2,10 +2,10 @@
 
 namespace Codestage\Authorization\Tests\Fakes\Http\Controllers\RoleAuthorizationTest;
 
-use Codestage\Authorization\Attributes\Authorize;
+use Codestage\Authorization\Attributes\AuthorizeRole;
 use Illuminate\Support\Facades\Response;
 
-#[Authorize(roles: 'test-role-1')]
+#[AuthorizeRole('test-role-1')]
 class RoleAuthorizationController1
 {
     /**

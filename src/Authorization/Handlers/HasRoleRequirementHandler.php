@@ -3,8 +3,7 @@
 namespace Codestage\Authorization\Authorization\Handlers;
 
 use Codestage\Authorization\Authorization\Requirements\HasRoleRequirement;
-use Codestage\Authorization\Contracts\IRequirement;
-use Codestage\Authorization\Contracts\IRequirementHandler;
+use Codestage\Authorization\Contracts\{IRequirement, IRequirementHandler};
 use Codestage\Authorization\Traits\HasPermissions;
 use Illuminate\Contracts\Auth\Guard as AuthManager;
 use Illuminate\Support\Collection;

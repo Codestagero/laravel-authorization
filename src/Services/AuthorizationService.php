@@ -4,13 +4,7 @@ namespace Codestage\Authorization\Services;
 
 use Closure;
 use Codestage\Authorization\Attributes\{AllowAnonymous, Authorize};
-use Codestage\Authorization\Authorization\Requirements\HasPermissionRequirement;
-use Codestage\Authorization\Authorization\Requirements\HasRoleRequirement;
-use Codestage\Authorization\Contracts\{IPermissionEnum,
-    IPolicy,
-    IRequirement,
-    Services\IAuthorizationService,
-    Services\IPolicyService};
+use Codestage\Authorization\Contracts\{Services\IAuthorizationService, Services\IPolicyService};
 use Codestage\Authorization\Traits\HasPermissions;
 use Illuminate\Contracts\Auth\Guard as AuthManager;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -20,8 +14,6 @@ use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
-use function in_array;
-use function is_array;
 
 /**
  * @internal
@@ -47,6 +39,25 @@ class AuthorizationService implements IAuthorizationService
     }
 
     /**
+     * Check if the given input is an Authorization attribute.
+     *
+     * @param object|string $class
+     * @return bool
+     */
+    private function isAuthorizationAttribute(object|string $class): bool
+    {
+        $className = \is_string($class) ? $class : \get_class($class);
+
+        foreach (self::AuthorizationAttributes as $attribute) {
+            if (is_subclass_of($className, $attribute) || $className === $attribute) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @param class-string $className
      * @param string $methodName
      * @throws ReflectionException
@@ -58,7 +69,7 @@ class AuthorizationService implements IAuthorizationService
         $method = $reflectionClass->getMethod($methodName);
 
         return (new Collection($method->getAttributes()))
-            ->filter(fn (ReflectionAttribute $attribute) => in_array($attribute->getName(), self::AuthorizationAttributes));
+            ->filter(fn (ReflectionAttribute $attribute) => $this->isAuthorizationAttribute($attribute->getName()));
     }
 
     /**
@@ -71,7 +82,7 @@ class AuthorizationService implements IAuthorizationService
         $reflectionClass = new ReflectionClass($className);
 
         return (new Collection($reflectionClass->getAttributes()))
-            ->filter(fn (ReflectionAttribute $attribute) => in_array($attribute->getName(), self::AuthorizationAttributes));
+            ->filter(fn (ReflectionAttribute $attribute) => $this->isAuthorizationAttribute($attribute->getName()));
     }
 
     /**
@@ -102,7 +113,7 @@ class AuthorizationService implements IAuthorizationService
         $reflectionFunction = new ReflectionFunction($closure);
 
         return (new Collection($reflectionFunction->getAttributes()))
-            ->filter(fn (ReflectionAttribute $attribute) => in_array($attribute->getName(), self::AuthorizationAttributes));
+            ->filter(fn (ReflectionAttribute $attribute) => \in_array($attribute->getName(), self::AuthorizationAttributes));
     }
 
     /**
@@ -115,17 +126,23 @@ class AuthorizationService implements IAuthorizationService
     private function canAccessThroughAttributes(Collection|array $attributes): bool
     {
         // Make sure the attributes are a Collection
-        if (is_array($attributes)) {
+        if (\is_array($attributes)) {
             $attributes = new Collection($attributes);
         }
 
+        // Instantiate attributes
+        $attributes = $attributes->map(fn (ReflectionAttribute $attribute) => $attribute->newInstance());
+
         // if AllowAnonymous is present, all other checks are bypassed
-        if ($attributes->some(fn (ReflectionAttribute $attribute) => $attribute->getName() === AllowAnonymous::class)) {
+        if ($attributes->some(fn (object $attribute) => $attribute instanceof AllowAnonymous)) {
             return true;
         }
 
+        // Loop through attributes and make sure all of them pass
+        $authorizationAttributes = $attributes->filter(fn (object $attribute) => $attribute instanceof Authorize);
+
         // If Authorize is present, make sure the user is authenticated
-        if ($attributes->some(fn (ReflectionAttribute $attribute) => $attribute->getName() === Authorize::class)) {
+        if ($authorizationAttributes->isNotEmpty()) {
             // Get the current user
             /** @var Model|HasPermissions $user */
             $user = $this->authManager->user();
@@ -135,17 +152,8 @@ class AuthorizationService implements IAuthorizationService
                 return abort(401);
             }
 
-            // Loop through attributes and make sure all of them pass
-            $authorizationAttributes = $attributes->filter(fn (ReflectionAttribute $attribute) => $attribute->getName() === Authorize::class);
-
-            /** @var ReflectionAttribute<Authorize> $attributeReflection */
-            foreach ($authorizationAttributes as $attributeReflection) {
-                $attribute = $attributeReflection->newInstance();
-
-                if (!$this->checkAttributePasses($attribute)) {
-                    return false;
-                }
-            }
+            // Loop through authorization attributes and make sure that every one of them passes
+            return $authorizationAttributes->every(fn (Authorize $attribute) => $this->checkAttributePasses($attribute));
         }
 
         return true;
@@ -160,71 +168,15 @@ class AuthorizationService implements IAuthorizationService
      */
     private function checkAttributePasses(Authorize $attribute): bool
     {
-        $computedPolicies = new Collection($attribute->policies ?? []);
-
-        // If this attribute has permission requirements, add them to the computed policies list
-        if ($attribute->permissions) {
-            if (!is_array($attribute->permissions)) {
-                $attribute->permissions = [$attribute->permissions];
-            }
-
-            // Add a new policy that requires the permissions
-            $computedPolicies->prepend(new class ($attribute->permissions) implements IPolicy {
-                /**
-                 * @param IPermissionEnum[] $permissions
-                 */
-                public function __construct(private readonly array $permissions)
-                {
-                }
-
-                /**
-                 * The list of requirements that need to be fulfilled in order to complete this policy.
-                 *
-                 * @return array<int, IRequirement>
-                 */
-                public function requirements(): array
-                {
-                    return [new HasPermissionRequirement($this->permissions)];
-                }
-            });
+        // If no policies are provided, no checks can fail
+        if (!$attribute->policies || (\is_array($attribute->policies) && \count($attribute->policies) === 0)) {
+            return true;
         }
 
-        // If this attribute has role requirements, add them to the computed policies list
-        if ($attribute->roles) {
-            if (!is_array($attribute->roles)) {
-                $attribute->roles = [$attribute->roles];
-            }
+        // If there are policies configured, check if any of them passes.
+        $policies = new Collection($attribute->policies);
 
-            // Add a new policy that requires the roles
-            $computedPolicies->prepend(new class ($attribute->roles) implements IPolicy {
-                /**
-                 * @param string[] $roles
-                 */
-                public function __construct(private readonly array $roles)
-                {
-                }
-
-                /**
-                 * The list of requirements that need to be fulfilled in order to complete this policy.
-                 *
-                 * @return array<int, IRequirement>
-                 */
-                public function requirements(): array
-                {
-                    return [new HasRoleRequirement($this->roles)];
-                }
-            });
-        }
-
-        // Run the computed policies
-        foreach ($computedPolicies as $policy) {
-            if ($this->policyService->runPolicy($policy)) {
-                return true;
-            }
-        }
-
-        // If no requirement passes, return true only if this attribute doesn't define any requirements
-        return $computedPolicies->isEmpty();
+        return $policies->isEmpty() || $policies->some(fn (string $policyName) => $this->policyService->runPolicy($policyName, $attribute->parameters));
     }
 
     /**

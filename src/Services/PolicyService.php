@@ -3,12 +3,9 @@
 namespace Codestage\Authorization\Services;
 
 use Codestage\Authorization\Attributes\HandledBy;
-use Codestage\Authorization\Contracts\IPolicy;
-use Codestage\Authorization\Contracts\IRequirement;
-use Codestage\Authorization\Contracts\IRequirementHandler;
 use Codestage\Authorization\Contracts\Services\IPolicyService;
-use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Contracts\Container\Container;
+use Codestage\Authorization\Contracts\{IPolicy, IRequirement, IRequirementHandler};
+use Illuminate\Contracts\Container\{BindingResolutionException, Container};
 use Illuminate\Support\Collection;
 use ReflectionClass;
 
@@ -29,16 +26,18 @@ class PolicyService implements IPolicyService
     /**
      * Run the given policy.
      *
-     * @param class-string|IPolicy $policy
+     * @param class-string $policy
+     * @param array<string, mixed> $parameters
      * @throws BindingResolutionException
      * @return bool
      */
-    public function runPolicy(string|IPolicy $policy): bool {
+    public function runPolicy(string $policy, array $parameters = []): bool
+    {
+        // Resolve the policy instance from the Container
         /** @var IPolicy $policyInstance */
-        $policyInstance = match (true) {
-            $policy instanceof IPolicy => $policy,
-            default => $this->_container->make($policy)
-        };
+        $policyInstance = $this->_container->make($policy, $parameters);
+
+        // Check that all the requirements defined by this policy pass
         $requirements = $policyInstance->requirements();
 
         foreach ($requirements as $requirement) {
@@ -47,6 +46,7 @@ class PolicyService implements IPolicyService
             }
         }
 
+        // If no requirement fails, return true
         return true;
     }
 
@@ -98,9 +98,9 @@ class PolicyService implements IPolicyService
             /** @var HandledBy $instance */
             $instance = $attribute->newInstance();
 
-            if (is_array($instance->handler)) {
+            if (\is_array($instance->handler)) {
                 $handlers->push(...$instance->handler);
-            } else if (is_string($instance->handler)) {
+            } else if (\is_string($instance->handler)) {
                 $handlers->push($instance->handler);
             }
         }

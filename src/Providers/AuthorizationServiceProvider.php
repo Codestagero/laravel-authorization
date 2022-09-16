@@ -3,10 +3,8 @@
 namespace Codestage\Authorization\Providers;
 
 use Codestage\Authorization\Console\Commands\InstallCommand;
-use Codestage\Authorization\Contracts\Services\IAuthorizationService;
-use Codestage\Authorization\Contracts\Services\IPolicyService;
-use Codestage\Authorization\Services\AuthorizationService;
-use Codestage\Authorization\Services\PolicyService;
+use Codestage\Authorization\Contracts\Services\{IAuthorizationService, IPolicyService};
+use Codestage\Authorization\Services\{AuthorizationService, PolicyService};
 use Illuminate\Support\ServiceProvider;
 
 class AuthorizationServiceProvider extends ServiceProvider
