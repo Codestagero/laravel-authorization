@@ -13,7 +13,7 @@ class MakePolicyCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $type = 'Resource';
+    protected $type = 'Policy';
 
     /**
      * Get the stub file for the generator.
@@ -40,5 +40,21 @@ class MakePolicyCommand extends GeneratorCommand
     protected function getDefaultNamespace($rootNamespace): string
     {
         return $rootNamespace . '\Authorization\Policies';
+    }
+
+    /**
+     * Get the desired class name from the input.
+     *
+     * @return string
+     */
+    protected function getNameInput(): string
+    {
+        $name = parent::getNameInput();
+
+        if (!str_ends_with($name, 'Policy')) {
+            $name .= 'Policy';
+        }
+
+        return $name;
     }
 }
