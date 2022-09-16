@@ -9,8 +9,8 @@ use Codestage\Authorization\Authorization\Requirements\HasRoleRequirement;
 use Codestage\Authorization\Contracts\{IPermissionEnum,
     IPolicy,
     IRequirement,
-    Services\IPolicyService,
-    Services\ITraitService};
+    Services\IAuthorizationService,
+    Services\IPolicyService};
 use Codestage\Authorization\Traits\HasPermissions;
 use Illuminate\Contracts\Auth\Guard as AuthManager;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -26,10 +26,10 @@ use function is_array;
 /**
  * @internal
  */
-class TraitService implements ITraitService
+class AuthorizationService implements IAuthorizationService
 {
     /**
-     * A list of traits that can be used for authorization.
+     * A list of attributes that can be used for authorization.
      */
     private const AuthorizationAttributes = [
         Authorize::class,
@@ -37,7 +37,7 @@ class TraitService implements ITraitService
     ];
 
     /**
-     * TraitService constructor method.
+     * AuthorizationService constructor method.
      *
      * @param AuthManager $authManager
      * @param IPolicyService $policyService
@@ -52,7 +52,7 @@ class TraitService implements ITraitService
      * @throws ReflectionException
      * @return Collection<ReflectionAttribute>
      */
-    private function extractTraitsFromClassMethod(string $className, string $methodName): Collection
+    private function extractAttributesFromClassMethod(string $className, string $methodName): Collection
     {
         $reflectionClass = new ReflectionClass($className);
         $method = $reflectionClass->getMethod($methodName);
@@ -66,7 +66,7 @@ class TraitService implements ITraitService
      * @throws ReflectionException
      * @return Collection
      */
-    private function extractTraitsFromClass(string $className): Collection
+    private function extractAttributesFromClass(string $className): Collection
     {
         $reflectionClass = new ReflectionClass($className);
 
@@ -75,29 +75,29 @@ class TraitService implements ITraitService
     }
 
     /**
-     * Compute the definitive list of traits that are being applied to a given method of a controller.
+     * Compute the definitive list of attributes that are being applied to a given method of a controller.
      *
      * @param class-string $className
      * @param string $methodName
      * @throws ReflectionException
      * @return Collection<ReflectionAttribute>
      */
-    private function computeTraitsForClassMethod(string $className, string $methodName): Collection
+    private function computeAttributesForClassMethod(string $className, string $methodName): Collection
     {
-        $classTraits = $this->extractTraitsFromClass($className);
-        $methodTraits = $this->extractTraitsFromClassMethod($className, $methodName);
+        $classAttributes = $this->extractAttributesFromClass($className);
+        $methodAttributes = $this->extractAttributesFromClassMethod($className, $methodName);
 
-        return $classTraits->merge($methodTraits);
+        return $classAttributes->merge($methodAttributes);
     }
 
     /**
-     * Compute the definitive list of traits that are being applied to a given closure.
+     * Compute the definitive list of attributes that are being applied to a given closure.
      *
      * @param Closure $closure
      * @throws ReflectionException
      * @return Collection
      */
-    private function computeTraitsForClosure(Closure $closure): Collection
+    private function computeAttributesForClosure(Closure $closure): Collection
     {
         $reflectionFunction = new ReflectionFunction($closure);
 
@@ -106,26 +106,26 @@ class TraitService implements ITraitService
     }
 
     /**
-     * Check whether an action can be accessed when guarded by the given traits.
+     * Check whether an action can be accessed when guarded by the given attributes.
      *
-     * @param Collection<ReflectionAttribute>|ReflectionAttribute[] $traits
+     * @param Collection<ReflectionAttribute>|ReflectionAttribute[] $attributes
      * @throws BindingResolutionException
      * @return bool
      */
-    private function canAccessThroughTraits(Collection|array $traits): bool
+    private function canAccessThroughAttributes(Collection|array $attributes): bool
     {
-        // Make sure the traits are a Collection
-        if (is_array($traits)) {
-            $traits = new Collection($traits);
+        // Make sure the attributes are a Collection
+        if (is_array($attributes)) {
+            $attributes = new Collection($attributes);
         }
 
         // if AllowAnonymous is present, all other checks are bypassed
-        if ($traits->some(fn (ReflectionAttribute $attribute) => $attribute->getName() === AllowAnonymous::class)) {
+        if ($attributes->some(fn (ReflectionAttribute $attribute) => $attribute->getName() === AllowAnonymous::class)) {
             return true;
         }
 
         // If Authorize is present, make sure the user is authenticated
-        if ($traits->some(fn (ReflectionAttribute $attribute) => $attribute->getName() === Authorize::class)) {
+        if ($attributes->some(fn (ReflectionAttribute $attribute) => $attribute->getName() === Authorize::class)) {
             // Get the current user
             /** @var Model|HasPermissions $user */
             $user = $this->authManager->user();
@@ -135,14 +135,14 @@ class TraitService implements ITraitService
                 return abort(401);
             }
 
-            // Loop through traits and make sure all of them pass
-            $authorizationTraits = $traits->filter(fn (ReflectionAttribute $attribute) => $attribute->getName() === Authorize::class);
+            // Loop through attributes and make sure all of them pass
+            $authorizationAttributes = $attributes->filter(fn (ReflectionAttribute $attribute) => $attribute->getName() === Authorize::class);
 
-            /** @var ReflectionAttribute<Authorize> $traitReflection */
-            foreach ($authorizationTraits as $traitReflection) {
-                $trait = $traitReflection->newInstance();
+            /** @var ReflectionAttribute<Authorize> $attributeReflection */
+            foreach ($authorizationAttributes as $attributeReflection) {
+                $attribute = $attributeReflection->newInstance();
 
-                if (!$this->checkTraitFails($trait)) {
+                if (!$this->checkAttributePasses($attribute)) {
                     return false;
                 }
             }
@@ -152,24 +152,24 @@ class TraitService implements ITraitService
     }
 
     /**
-     * Check if requirements defined by the given trait pass in the current context.
+     * Check if requirements defined by the given attribute pass in the current context.
      *
-     * @param Authorize $trait
+     * @param Authorize $attribute
      * @throws BindingResolutionException
      * @return bool
      */
-    private function checkTraitFails(Authorize $trait): bool
+    private function checkAttributePasses(Authorize $attribute): bool
     {
-        $computedPolicies = new Collection($trait->policies ?? []);
+        $computedPolicies = new Collection($attribute->policies ?? []);
 
-        // If this trait has permission requirements, add them to the computed policies list
-        if ($trait->permissions) {
-            if (!is_array($trait->permissions)) {
-                $trait->permissions = [$trait->permissions];
+        // If this attribute has permission requirements, add them to the computed policies list
+        if ($attribute->permissions) {
+            if (!is_array($attribute->permissions)) {
+                $attribute->permissions = [$attribute->permissions];
             }
 
             // Add a new policy that requires the permissions
-            $computedPolicies->prepend(new class ($trait->permissions) implements IPolicy {
+            $computedPolicies->prepend(new class ($attribute->permissions) implements IPolicy {
                 /**
                  * @param IPermissionEnum[] $permissions
                  */
@@ -189,14 +189,14 @@ class TraitService implements ITraitService
             });
         }
 
-        // If this trait has role requirements, add them to the computed policies list
-        if ($trait->roles) {
-            if (!is_array($trait->roles)) {
-                $trait->roles = [$trait->roles];
+        // If this attribute has role requirements, add them to the computed policies list
+        if ($attribute->roles) {
+            if (!is_array($attribute->roles)) {
+                $attribute->roles = [$attribute->roles];
             }
 
             // Add a new policy that requires the roles
-            $computedPolicies->prepend(new class ($trait->roles) implements IPolicy {
+            $computedPolicies->prepend(new class ($attribute->roles) implements IPolicy {
                 /**
                  * @param string[] $roles
                  */
@@ -223,8 +223,8 @@ class TraitService implements ITraitService
             }
         }
 
-        // If no requirement passes, return true only if this trait doesn't define any requirements
-        return !$trait->policies && !$trait->roles && !$trait->permissions;
+        // If no requirement passes, return true only if this attribute doesn't define any requirements
+        return $computedPolicies->isEmpty();
     }
 
     /**
@@ -238,9 +238,9 @@ class TraitService implements ITraitService
      */
     public function canAccessControllerMethod(string $className, string $methodName): bool
     {
-        $traits = $this->computeTraitsForClassMethod($className, $methodName);
+        $attributes = $this->computeAttributesForClassMethod($className, $methodName);
 
-        return $this->canAccessThroughTraits($traits);
+        return $this->canAccessThroughAttributes($attributes);
     }
 
     /**
@@ -253,8 +253,8 @@ class TraitService implements ITraitService
      */
     public function canAccessClosure(Closure $closure): bool
     {
-        $traits = $this->computeTraitsForClosure($closure);
+        $attributes = $this->computeAttributesForClosure($closure);
 
-        return $this->canAccessThroughTraits($traits);
+        return $this->canAccessThroughAttributes($attributes);
     }
 }

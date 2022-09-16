@@ -3,10 +3,10 @@
 namespace Codestage\Authorization\Providers;
 
 use Codestage\Authorization\Console\Commands\InstallCommand;
+use Codestage\Authorization\Contracts\Services\IAuthorizationService;
 use Codestage\Authorization\Contracts\Services\IPolicyService;
-use Codestage\Authorization\Contracts\Services\ITraitService;
+use Codestage\Authorization\Services\AuthorizationService;
 use Codestage\Authorization\Services\PolicyService;
-use Codestage\Authorization\Services\TraitService;
 use Illuminate\Support\ServiceProvider;
 
 class AuthorizationServiceProvider extends ServiceProvider
@@ -17,7 +17,7 @@ class AuthorizationServiceProvider extends ServiceProvider
      * @var array
      */
     public array $bindings = [
-        ITraitService::class => TraitService::class,
+        IAuthorizationService::class => AuthorizationService::class,
         IPolicyService::class => PolicyService::class,
     ];
 

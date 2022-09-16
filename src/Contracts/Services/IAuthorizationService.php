@@ -9,7 +9,7 @@ use ReflectionException;
 /**
  * @internal
  */
-interface ITraitService
+interface IAuthorizationService
 {
     /**
      * Check whether the given controller method can be accessed in the current request context.
