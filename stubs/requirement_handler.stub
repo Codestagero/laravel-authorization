@@ -1,0 +1,25 @@
+<?php
+
+namespace DummyNamespace;
+
+use Codestage\Authorization\Contracts\IRequirement;
+use Codestage\Authorization\Contracts\IRequirementHandler;
+use NamespacedDummyRequirement;
+
+/**
+ * @implements IRequirementHandler<DummyRequirement>
+ */
+class DummyClass implements IRequirementHandler
+{
+    /**
+     * Check whether the requirement this class handles is passing.
+     *
+     * @param DummyRequirement $requirement
+     * @return bool
+     */
+    public function handle(IRequirement $requirement): bool
+    {
+        // TODO implement DummyRequirement handing
+        return true;
+    }
+}

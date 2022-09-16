@@ -2,11 +2,11 @@
 
 namespace Codestage\Authorization\Tests\Fakes\Http\Controllers\RoleAuthorizationTest;
 
-use Codestage\Authorization\Attributes\Authorize;
+use Codestage\Authorization\Attributes\AuthorizeRole;
 use Illuminate\Support\Facades\Response;
 
-#[Authorize(roles: 'test-role-1')]
-#[Authorize(roles: 'test-role-3')]
+#[AuthorizeRole('test-role-1')]
+#[AuthorizeRole('test-role-3')]
 class RoleAuthorizationController4
 {
     /**
@@ -20,7 +20,7 @@ class RoleAuthorizationController4
     /**
      * @return \Illuminate\Http\Response
      */
-    #[Authorize(roles: 'test-role-2')]
+    #[AuthorizeRole('test-role-2')]
     public function requiresClassAndMethodRoles(): \Illuminate\Http\Response
     {
         return Response::noContent();

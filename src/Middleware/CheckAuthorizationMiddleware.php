@@ -3,7 +3,7 @@
 namespace Codestage\Authorization\Middleware;
 
 use Closure;
-use Codestage\Authorization\Contracts\ITraitService;
+use Codestage\Authorization\Contracts\Services\IAuthorizationService;
 use Illuminate\Http\Request;
 use ReflectionException;
 use Throwable;
@@ -13,7 +13,7 @@ class CheckAuthorizationMiddleware
     /**
      * AuthorizeMiddleware constructor method.
      */
-    public function __construct(private readonly ITraitService $traitService)
+    public function __construct(private readonly IAuthorizationService $traitService)
     {
     }
 
