@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use ReflectionException;
 use Throwable;
 
-class AuthorizeMiddleware
+class CheckAuthorizationMiddleware
 {
     /**
      * AuthorizeMiddleware constructor method.
@@ -27,25 +27,27 @@ class AuthorizeMiddleware
      */
     public function handle(Request $request, Closure $next): mixed
     {
-        // If the request is made to an action inside a controller
-        if ($this->_requestUsesController($request)) {
-            $controller = $request->route()->getControllerClass();
-            $method = $request->route()->getActionMethod();
+        if ($request->route()) {
+            // If the request is made to an action inside a controller
+            if ($this->_requestUsesController($request)) {
+                $controller = $request->route()->getControllerClass();
+                $method = $request->route()->getActionMethod();
 
-            // If the controller and method are the same, then this is a Single Action controller
-            if (!strcmp($controller, $method)) {
-                $method = '__invoke';
+                // If the controller and method are the same, then this is a Single Action controller
+                if (!strcmp($controller, $method)) {
+                    $method = '__invoke';
+                }
+
+                if (!$this->traitService->canAccessControllerMethod($controller, $method)) {
+                    abort(403);
+                }
             }
 
-            if (!$this->traitService->canAccessControllerMethod($controller, $method)) {
-                abort(403);
-            }
-        }
-
-        // If the request is made to an action inside a Closure
-        if ($request->route()->getAction('uses') instanceof Closure) {
-            if (!$this->traitService->canAccessClosure($request->route()->getAction('uses'))) {
-                abort(403);
+            // If the request is made to an action inside a Closure
+            if ($request->route()->getAction('uses') instanceof Closure) {
+                if (!$this->traitService->canAccessClosure($request->route()->getAction('uses'))) {
+                    abort(403);
+                }
             }
         }
 

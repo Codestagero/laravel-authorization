@@ -24,11 +24,6 @@ jobs:
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      - name: Create Database
-        run: |
-          mkdir -p database
-          touch database/database.sqlite
-
       - name: Generate App Key
         id: generate-uuid
         uses: filipstefansson/uuid-action@v1
@@ -37,7 +32,5 @@ jobs:
 
       - name: Execute PHPUnit tests
         env:
-          DB_CONNECTION: sqlite
-          DB_DATABASE: database/database.sqlite
           APP_KEY: ${{ steps.generate-uuid.outputs.uuid }}
         run: vendor/bin/phpunit -c phpunit.dist.xml
