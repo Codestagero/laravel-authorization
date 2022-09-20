@@ -1,6 +1,6 @@
 # codestage/laravel-authorization
 [![Packagist Version (including pre-releases)](https://img.shields.io/packagist/v/codestage/laravel-authorization?include_prereleases&style=flat)](https://packagist.org/packages/codestage/laravel-authorization)
-[![Unit Testing](https://github.com/Codestagero/laravel-authorization/actions/workflows/tests.yml/badge.svg)](https://github.com/Codestagero/laravel-authorization/actions/workflows/tests.yml)
+[![Tests](https://github.com/Codestagero/laravel-authorization/actions/workflows/tests.yml/badge.svg)](https://github.com/Codestagero/laravel-authorization/actions/workflows/tests.yml)
 
 Declarative permission, role and policy-based authorization, inspired by ASP.NET.
 
