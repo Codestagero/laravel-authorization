@@ -134,6 +134,14 @@ class InstallCommand extends Command
             'namespace' => self::PermissionEnumNamespace
         ]);
 
+        // Extract path before last slash (supposedly the Enums directory)
+        $directory = $this->laravel->basePath(substr(self::PermissionEnumPath, 0, strrpos(self::PermissionEnumPath, '/')));
+
+        // If the directory does not exist, create it
+        if (!is_dir($directory)) {
+            mkdir($directory);
+        }
+
         // Publish the stub
         return file_put_contents($path, $enumContents) !== false;
     }
