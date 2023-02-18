@@ -19,18 +19,18 @@
         }
     ],
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.11",
-        "phpunit/phpunit": "^9.5",
+        "friendsofphp/php-cs-fixer": "^3",
+        "phpunit/phpunit": "^10",
         "mockery/mockery": "^1.5",
-        "orchestra/testbench": "^7.7"
+        "orchestra/testbench": "^8"
     },
     "require": {
-        "illuminate/support": "^9.30",
-        "illuminate/database": "^9.30",
-        "illuminate/contracts": "^9.30",
-        "illuminate/console": "^9.30",
-        "illuminate/http": "^9.30",
-        "illuminate/auth": "^9.30"
+        "illuminate/support": "^10",
+        "illuminate/database": "^10",
+        "illuminate/contracts": "^10",
+        "illuminate/console": "^10",
+        "illuminate/http": "^10",
+        "illuminate/auth": "^10"
     },
     "extra": {
         "laravel": {
