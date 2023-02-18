@@ -1,6 +1,7 @@
 vendor
 phpunit.dev.xml
 .phpunit.result.cache
+.phpunit.cache
 .idea
 .vscode
 .php-cs-fixer.cache
