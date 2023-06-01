@@ -3,7 +3,7 @@
 namespace Codestage\Authorization\Middleware;
 
 use Closure;
-use Codestage\Authorization\Contracts\Services\IAuthorizationService;
+use Codestage\Authorization\Contracts\Services\IAuthorizationCheckService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Request;
@@ -16,7 +16,7 @@ class AuthorizationMiddleware
      * AuthorizeMiddleware constructor method.
      */
     public function __construct(
-        private readonly IAuthorizationService $_authorizationService
+        private readonly IAuthorizationCheckService $_authorizationService
     ) {
     }
 

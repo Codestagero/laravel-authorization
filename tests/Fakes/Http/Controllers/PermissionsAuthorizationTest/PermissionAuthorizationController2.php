@@ -2,11 +2,11 @@
 
 namespace Codestage\Authorization\Tests\Fakes\Http\Controllers\PermissionsAuthorizationTest;
 
-use Codestage\Authorization\Attributes\AuthorizePermission;
+use Codestage\Authorization\Attributes\Authorize;
 use Codestage\Authorization\Tests\Fakes\Enums\FakePermission;
 use Illuminate\Support\Facades\Response;
 
-#[AuthorizePermission([FakePermission::ExamplePermission1, FakePermission::ExamplePermission3])]
+#[Authorize(permissions: [FakePermission::ExamplePermission1, FakePermission::ExamplePermission3])]
 class PermissionAuthorizationController2
 {
     /**

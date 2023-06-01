@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Testing\TestResponse;
 
 class PolicyAuthorizationTest extends TestCase
-{
+{ 
     /**
      * @test
      * @return void
@@ -70,53 +70,6 @@ class PolicyAuthorizationTest extends TestCase
         /** @var TestResponse[] $responses */
         $responses = [
             $this->getJson(URL::route('test1')),
-        ];
-
-        // Assert
-        $responses[0]->assertSuccessful();
-    }
-
-    /**
-     * @test
-     * @return void
-     */
-    public function PolicyWithRouteDependency_WhenDependencyDoesNotExist_Forbidden(): void
-    {
-        // Arrange
-        $this->authenticateUser();
-        Route::get('test1/{profile}', PolicyAuthorizationTestController2::class)->middleware([AuthorizationMiddleware::class])->name('test1');
-
-        // Act
-        /** @var TestResponse[] $responses */
-        $responses = [
-            $this->getJson(URL::route('test1', [
-                'profile' => $this->faker->slug()
-            ])),
-        ];
-
-        // Assert
-        $responses[0]->assertForbidden();
-    }
-
-    /**
-     * @test
-     * @return void
-     */
-    public function PolicyWithRouteDependency_WhenDependencyFound_Success(): void
-    {
-        // Arrange
-        $this->authenticateUser();
-        Route::get('test1/{profile}', PolicyAuthorizationTestController2::class)->middleware([AuthorizationMiddleware::class])->name('test1');
-        $profile = UserProfile::query()->create([
-            'user_id' => User::query()->create()->getKey()
-        ]);
-
-        // Act
-        /** @var TestResponse[] $responses */
-        $responses = [
-            $this->getJson(URL::route('test1', [
-                'profile' => $profile->getRouteKey()
-            ])),
         ];
 
         // Assert

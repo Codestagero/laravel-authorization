@@ -3,12 +3,10 @@
 namespace Codestage\Authorization\Services;
 
 use Codestage\Authorization\Attributes\HandledBy;
-use Codestage\Authorization\Attributes\ProvidedBy;
-use Codestage\Authorization\Contracts\{IPolicyProvider, IRequirement, IRequirementHandler};
+use Codestage\Authorization\Contracts\{IPolicy, IRequirement, IRequirementHandler};
 use Codestage\Authorization\Contracts\Services\IPolicyService;
 use Illuminate\Contracts\Container\{BindingResolutionException, Container};
 use Illuminate\Support\Collection;
-use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
 use function is_array;
@@ -33,18 +31,19 @@ class PolicyService implements IPolicyService
      * Run the given policy.
      *
      * @param class-string $policy
-     * @param array<string, mixed> $parameters
      * @throws BindingResolutionException
      * @throws ReflectionException
      * @return bool
      */
-    public function runPolicy(string $policy, array $parameters = []): bool
+    public function runPolicy(string|IPolicy $policy): bool
     {
         // Resolve the policy instance from the Container
-        $policyInstance = $this->getProviderForPolicy($policy)->make($policy, $parameters);
+        if (is_string($policy)) {
+            $policy = $this->_container->make($policy);
+        }
 
         // Check that all the requirements defined by this policy pass
-        $requirements = $policyInstance->requirements();
+        $requirements = $policy->requirements();
 
         foreach ($requirements as $requirement) {
             if (!$this->_checkRequirement($requirement)) {
@@ -113,28 +112,5 @@ class PolicyService implements IPolicyService
 
         // Return a list of unique handlers
         return $handlers->unique();
-    }
-
-    /**
-     * Get the provider for the given policy class.
-     *
-     * @param class-string $policy
-     * @throws BindingResolutionException
-     * @throws ReflectionException
-     * @return IPolicyProvider
-     */
-    private function getProviderForPolicy(string $policy): IPolicyProvider {
-        $reflection = new ReflectionClass($policy);
-        $configuredProviders = $reflection->getAttributes(ProvidedBy::class);
-        if (count($configuredProviders)) {
-            if ($configuredProviders[0] instanceof ReflectionAttribute) {
-                /** @var ProvidedBy $configuration */
-                $configuration = $configuredProviders[0]->newInstance();
-
-                return $this->_container->make($configuration->provider);
-            }
-        }
-
-        return $this->_container->make(DefaultPolicyProvider::class);
     }
 }

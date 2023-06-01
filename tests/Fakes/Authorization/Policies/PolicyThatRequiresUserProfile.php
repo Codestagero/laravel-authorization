@@ -9,10 +9,6 @@ use Codestage\Authorization\Tests\Fakes\Models\UserProfile;
 
 class PolicyThatRequiresUserProfile implements IPolicy
 {
-    public function __construct(public readonly UserProfile $profile)
-    {
-    }
-
     /**
      * The list of requirements that need to be fulfilled in order to complete this policy.
      *
@@ -21,7 +17,6 @@ class PolicyThatRequiresUserProfile implements IPolicy
     public function requirements(): array
     {
         return [
-            new NotNullRequirement($this->profile)
         ];
     }
 }

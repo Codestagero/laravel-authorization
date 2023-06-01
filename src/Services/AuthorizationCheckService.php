@@ -4,7 +4,9 @@ namespace Codestage\Authorization\Services;
 
 use Closure;
 use Codestage\Authorization\Attributes\{AllowAnonymous, Authorize};
-use Codestage\Authorization\Contracts\{Services\IAuthorizationService, Services\IPolicyService};
+use Codestage\Authorization\Contracts\{IPermissionEnum, IPolicy, Services\IAuthorizationCheckService, Services\IPolicyService};
+use Codestage\Authorization\Requirements\HasPermissionRequirement;
+use Codestage\Authorization\Requirements\HasRoleRequirement;
 use Codestage\Authorization\Traits\HasPermissions;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Auth\Guard as AuthManager;
@@ -24,7 +26,7 @@ use function is_string;
 /**
  * @internal
  */
-class AuthorizationService implements IAuthorizationService
+class AuthorizationCheckService implements IAuthorizationCheckService
 {
     /**
      * A list of attributes that can be used for authorization.
@@ -35,10 +37,10 @@ class AuthorizationService implements IAuthorizationService
     ];
 
     /**
-     * AuthorizationService constructor method.
+     * AuthorizationCheckService constructor method.
      *
      * @param AuthManager $_authManager
-     * @param IPolicyService $_authManager
+     * @param IPolicyService $_policyService
      */
     public function __construct(
         private readonly AuthManager $_authManager,
@@ -128,8 +130,8 @@ class AuthorizationService implements IAuthorizationService
      * Check whether an action can be accessed when guarded by the given attributes.
      *
      * @param Collection<ReflectionAttribute>|ReflectionAttribute[] $attributes
-     * @throws BindingResolutionException
      * @return bool
+     * @throws AuthenticationException
      */
     private function canAccessThroughAttributes(Collection|array $attributes): bool
     {
@@ -176,15 +178,48 @@ class AuthorizationService implements IAuthorizationService
      */
     private function checkAttributePasses(Authorize $attribute): bool
     {
-        // If no policies are provided, no checks can fail
-        if (!$attribute->policies || (is_array($attribute->policies) && count($attribute->policies) === 0)) {
-            return true;
-        }
-
         // If there are policies configured, check if any of them passes.
         $policies = new Collection($attribute->policies);
 
-        return $policies->isEmpty() || $policies->some(fn (string $policyName) => $this->_policyService->runPolicy($policyName, $attribute->parameters));
+        // Add role policies
+        if (!!$attribute->roles) {
+            $roles = new Collection($attribute->roles);
+            foreach ($roles as $role) {
+                $policies->push(new class ($role) implements IPolicy {
+                    /** Constructor method. */
+                    public function __construct(public readonly string $role)
+                    {
+                    }
+
+                    /** @inheritDoc */
+                    public function requirements(): array
+                    {
+                        return [new HasRoleRequirement($this->role)];
+                    }
+                });
+            }
+        }
+
+        // Add permission policies
+        if (!!$attribute->permissions) {
+            $permissions = new Collection($attribute->permissions);
+            foreach ($permissions as $permission) {
+                $policies->push(new class ($permission) implements IPolicy {
+                    /** Constructor method. */
+                    public function __construct(public readonly IPermissionEnum $permission)
+                    {
+                    }
+
+                    /** @inheritDoc */
+                    public function requirements(): array
+                    {
+                        return [new HasPermissionRequirement($this->permission)];
+                    }
+                });
+            }
+        }
+
+        return $policies->isEmpty() || $policies->some(fn (string|IPolicy $policyName) => $this->_policyService->runPolicy($policyName));
     }
 
     /**

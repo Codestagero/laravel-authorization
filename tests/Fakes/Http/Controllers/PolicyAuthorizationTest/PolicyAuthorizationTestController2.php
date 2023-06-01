@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Response;
 
 class PolicyAuthorizationTestController2
 {
-    #[Authorize(PolicyThatRequiresUserProfile::class, ['profile'])]
+    #[Authorize(PolicyThatRequiresUserProfile::class)]
     public function __invoke(UserProfile $profile)
     {
         return Response::noContent();
