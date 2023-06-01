@@ -24,8 +24,9 @@ class PolicyService implements IPolicyService
      *
      * @param Container $_container
      */
-    public function __construct(private readonly Container $_container)
-    {
+    public function __construct(
+        private readonly Container $_container
+    ) {
     }
 
     /**

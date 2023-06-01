@@ -15,7 +15,10 @@ class Authorize
      * @param class-string|class-string[]|null $policies
      * @param array<string, mixed> $parameters
      */
-    public function __construct(public readonly string|array|null $policies = null, public readonly array $parameters = [])
-    {
+    public function __construct(
+        public readonly string|array|null $policies = null,
+        /** @deprecated You should no longer try to pass arguments directly */
+        public readonly array $parameters = []
+    ) {
     }
 }

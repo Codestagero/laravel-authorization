@@ -37,11 +37,13 @@ class AuthorizationService implements IAuthorizationService
     /**
      * AuthorizationService constructor method.
      *
-     * @param AuthManager $authManager
-     * @param IPolicyService $policyService
+     * @param AuthManager $_authManager
+     * @param IPolicyService $_authManager
      */
-    public function __construct(private readonly AuthManager $authManager, private readonly IPolicyService $policyService)
-    {
+    public function __construct(
+        private readonly AuthManager $_authManager,
+        private readonly IPolicyService $_policyService
+    ) {
     }
 
     /**
@@ -144,14 +146,14 @@ class AuthorizationService implements IAuthorizationService
             return true;
         }
 
-        // Loop through attributes and make sure all of them pass
+        // Only take into account authorization attributes
         $authorizationAttributes = $attributes->filter(fn (object $attribute) => $attribute instanceof Authorize);
 
         // If Authorize is present, make sure the user is authenticated
         if ($authorizationAttributes->isNotEmpty()) {
             // Get the current user
             /** @var Model|HasPermissions $user */
-            $user = $this->authManager->user();
+            $user = $this->_authManager->user();
 
             // If the user is not authenticated, no other checks can be performed
             if (!$user) {
@@ -182,7 +184,7 @@ class AuthorizationService implements IAuthorizationService
         // If there are policies configured, check if any of them passes.
         $policies = new Collection($attribute->policies);
 
-        return $policies->isEmpty() || $policies->some(fn (string $policyName) => $this->policyService->runPolicy($policyName, $attribute->parameters));
+        return $policies->isEmpty() || $policies->some(fn (string $policyName) => $this->_policyService->runPolicy($policyName, $attribute->parameters));
     }
 
     /**

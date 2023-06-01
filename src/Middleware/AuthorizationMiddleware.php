@@ -15,8 +15,9 @@ class AuthorizationMiddleware
     /**
      * AuthorizeMiddleware constructor method.
      */
-    public function __construct(private readonly IAuthorizationService $traitService)
-    {
+    public function __construct(
+        private readonly IAuthorizationService $_authorizationService
+    ) {
     }
 
     /**
@@ -42,14 +43,14 @@ class AuthorizationMiddleware
                     $method = '__invoke';
                 }
 
-                if (!$this->traitService->canAccessControllerMethod($controller, $method)) {
+                if (!$this->_authorizationService->canAccessControllerMethod($controller, $method)) {
                     throw new AuthorizationException();
                 }
             }
 
             // If the request is made to an action inside a Closure
             if ($request->route()->getAction('uses') instanceof Closure) {
-                if (!$this->traitService->canAccessClosure($request->route()->getAction('uses'))) {
+                if (!$this->_authorizationService->canAccessClosure($request->route()->getAction('uses'))) {
                     throw new AuthorizationException();
                 }
             }

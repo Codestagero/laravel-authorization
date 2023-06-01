@@ -18,8 +18,9 @@ class HasRoleRequirementHandler implements IRequirementHandler
      *
      * @param AuthManager $authManager
      */
-    public function __construct(private readonly AuthManager $authManager)
-    {
+    public function __construct(
+        private readonly AuthManager $_authManager
+    ) {
     }
 
     /**
@@ -31,7 +32,7 @@ class HasRoleRequirementHandler implements IRequirementHandler
     public function handle(IRequirement $requirement): bool
     {
         /** @var HasPermissions $user */
-        $user = $this->authManager->user();
+        $user = $this->_authManager->user();
 
         // If there is no current user, the requirement fails
         if (!$user) {
