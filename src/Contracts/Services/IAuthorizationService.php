@@ -12,6 +12,8 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 interface IAuthorizationService
 {
     /**
+     * Check if the current user can access an action behind the given {@link $policy}.
+     *
      * @param TResource|null $resource
      * @param IPolicy|class-string $policy
      * @return bool
@@ -20,6 +22,8 @@ interface IAuthorizationService
     public function authorizePolicy(mixed $resource, IPolicy|string $policy): bool;
 
     /**
+     * Check if the current user can access an action behind the given {@link $requirements}.
+     *
      * @param TResource|null $resource
      * @param iterable<IRequirement> $requirements
      * @return bool
