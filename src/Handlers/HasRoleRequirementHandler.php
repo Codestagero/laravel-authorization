@@ -16,7 +16,7 @@ class HasRoleRequirementHandler implements IRequirementHandler
     /**
      * HasRoleRequirementHandler constructor method.
      *
-     * @param AuthManager $authManager
+     * @param AuthManager $_authManager
      */
     public function __construct(
         private readonly AuthManager $_authManager

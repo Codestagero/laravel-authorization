@@ -16,7 +16,7 @@ class HasPermissionRequirementHandler implements IRequirementHandler
     /**
      * HasPermissionHandler constructor method.
      *
-     * @param AuthManager $authManager
+     * @param AuthManager $_authManager
      */
     public function __construct(
         private readonly AuthManager $_authManager
@@ -40,6 +40,7 @@ class HasPermissionRequirementHandler implements IRequirementHandler
         }
 
         // The requirement passes if there is at least one permission that this user indeed has
-        return (new Collection($requirement->permissions))->some(fn (IPermissionEnum $permission) => $user->hasPermission($permission));
+        return (new Collection($requirement->permissions))
+            ->some(fn (IPermissionEnum $permission) => $user->hasPermission($permission));
     }
 }

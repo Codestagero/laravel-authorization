@@ -6,8 +6,8 @@ use Codestage\Authorization\Console\Commands\InstallCommand;
 use Codestage\Authorization\Console\Commands\MakePolicyCommand;
 use Codestage\Authorization\Console\Commands\MakeRequirementCommand;
 use Codestage\Authorization\Console\Commands\MakeRequirementHandlerCommand;
-use Codestage\Authorization\Contracts\Services\{IAuthorizationCheckService, IPolicyService};
-use Codestage\Authorization\Services\{AuthorizationCheckService, PolicyService};
+use Codestage\Authorization\Contracts\Services\{IAuthorizationCheckService, IAuthorizationService};
+use Codestage\Authorization\Services\{AuthorizationCheckService, AuthorizationService};
 use Illuminate\Foundation\Console\PolicyMakeCommand as BaseMakePolicyCommand;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,7 +20,7 @@ class AuthorizationServiceProvider extends ServiceProvider
      */
     public array $bindings = [
         IAuthorizationCheckService::class => AuthorizationCheckService::class,
-        IPolicyService::class => PolicyService::class,
+        IAuthorizationService::class => AuthorizationService::class,
     ];
 
     /**

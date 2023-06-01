@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Collection;
 
 /**
- * @template        TPermission of \Codestage\Authorization\Contracts\IPermissionEnum
+ * @template        TPermission of IPermissionEnum
  * @property-read   Collection<Role>        $roles
  * @method          HasManyThrough  hasManyThrough(string $related, string $through, string|null $firstKey = null, string|null $secondKey = null, string|null $localKey = null, string|null $secondLocalKey = null)
  */

@@ -56,6 +56,11 @@ abstract class TestCase extends OrchestraTestCase
             $table->foreignIdFor(User::class);
             $table->timestamps();
         });
+        Schema::create('documents', function (Blueprint $table): void {
+            $table->id();
+            $table->foreignIdFor(User::class);
+            $table->timestamps();
+        });
     }
 
     /**

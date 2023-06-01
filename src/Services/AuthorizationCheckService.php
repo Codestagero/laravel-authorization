@@ -4,20 +4,22 @@ namespace Codestage\Authorization\Services;
 
 use Closure;
 use Codestage\Authorization\Attributes\{AllowAnonymous, Authorize};
-use Codestage\Authorization\Contracts\{IPermissionEnum, IPolicy, Services\IAuthorizationCheckService, Services\IPolicyService};
+use Illuminate\Contracts\Container\Container;
+use Codestage\Authorization\Contracts\{IPermissionEnum,
+    IPolicy,
+    Services\IAuthorizationCheckService,
+    Services\IAuthorizationService};
 use Codestage\Authorization\Requirements\HasPermissionRequirement;
 use Codestage\Authorization\Requirements\HasRoleRequirement;
 use Codestage\Authorization\Traits\HasPermissions;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Auth\Guard as AuthManager;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
-use function count;
 use function get_class;
 use function in_array;
 use function is_array;
@@ -40,11 +42,13 @@ class AuthorizationCheckService implements IAuthorizationCheckService
      * AuthorizationCheckService constructor method.
      *
      * @param AuthManager $_authManager
-     * @param IPolicyService $_policyService
+     * @param Container $_container
+     * @param IAuthorizationService $_authorizationService
      */
     public function __construct(
         private readonly AuthManager $_authManager,
-        private readonly IPolicyService $_policyService
+        private readonly Container $_container,
+        private readonly IAuthorizationService $_authorizationService
     ) {
     }
 
@@ -173,7 +177,6 @@ class AuthorizationCheckService implements IAuthorizationCheckService
      * Check if requirements defined by the given attribute pass in the current context.
      *
      * @param Authorize $attribute
-     * @throws BindingResolutionException
      * @return bool
      */
     private function checkAttributePasses(Authorize $attribute): bool
@@ -219,7 +222,16 @@ class AuthorizationCheckService implements IAuthorizationCheckService
             }
         }
 
-        return $policies->isEmpty() || $policies->some(fn (string|IPolicy $policyName) => $this->_policyService->runPolicy($policyName));
+        // If no policies are present, the attribute cannot fail
+        if ($policies->isEmpty()) {
+            return true;
+        }
+
+        // Instantiate all policies and run them
+        return $policies->map(fn (string|IPolicy $policy) => is_string($policy) ? $this->_container->make($policy) : $policy)
+            ->some(function (IPolicy $policy) {
+                return $this->_authorizationService->authorizePolicy(null, $policy);
+            });
     }
 
     /**
@@ -227,9 +239,9 @@ class AuthorizationCheckService implements IAuthorizationCheckService
      *
      * @param class-string $className
      * @param class-string $methodName
-     * @throws BindingResolutionException
-     * @throws ReflectionException
      * @return bool
+     * @throws AuthenticationException
+     * @throws ReflectionException
      */
     public function canAccessControllerMethod(string $className, string $methodName): bool
     {
@@ -242,9 +254,9 @@ class AuthorizationCheckService implements IAuthorizationCheckService
      * Check whether the given controller method can be accessed in the current request context.
      *
      * @param Closure $closure
-     * @throws BindingResolutionException
-     * @throws ReflectionException
      * @return bool
+     * @throws AuthenticationException
+     * @throws ReflectionException
      */
     public function canAccessClosure(Closure $closure): bool
     {

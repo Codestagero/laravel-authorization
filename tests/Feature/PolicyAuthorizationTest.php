@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Testing\TestResponse;
 
 class PolicyAuthorizationTest extends TestCase
-{ 
+{
     /**
      * @test
      * @return void
