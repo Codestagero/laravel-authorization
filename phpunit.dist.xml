@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         backupGlobals="false"
          bootstrap="vendor/autoload.php"
          colors="true"
-         processIsolation="false"
          stopOnFailure="true"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd"
-         cacheDirectory=".phpunit.cache"
-         backupStaticProperties="false">
+         cacheDirectory=".phpunit.cache">
   <testsuites>
     <testsuite name="Unit Test Suite">
       <directory suffix=".php">./tests/Unit</directory>
@@ -17,7 +14,7 @@
     </testsuite>
   </testsuites>
   <php>
-    <env name="DB_CONNECTION" value="sqlite"/>
-    <env name="DB_DATABASE" value=":memory:"/>
+<!--    <env name="DB_CONNECTION" value="sqlite"/>-->
+<!--    <env name="DB_DATABASE" value=":memory:"/>-->
   </php>
 </phpunit>
