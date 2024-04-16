@@ -2,10 +2,7 @@
 
 namespace Codestage\Authorization\Tests\Fakes\Authorization\Policies;
 
-use Codestage\Authorization\Contracts\IPolicy;
-use Codestage\Authorization\Contracts\IRequirement;
-use Codestage\Authorization\Tests\Fakes\Authorization\Requirement\NotNullRequirement;
-use Codestage\Authorization\Tests\Fakes\Models\UserProfile;
+use Codestage\Authorization\Contracts\{IPolicy, IRequirement};
 
 class PolicyThatRequiresUserProfile implements IPolicy
 {

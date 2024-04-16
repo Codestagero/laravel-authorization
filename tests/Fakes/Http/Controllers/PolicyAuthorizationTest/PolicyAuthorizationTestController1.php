@@ -4,13 +4,13 @@ namespace Codestage\Authorization\Tests\Fakes\Http\Controllers\PolicyAuthorizati
 
 use Codestage\Authorization\Attributes\Authorize;
 use Codestage\Authorization\Tests\Fakes\Authorization\Policies\RequireDateChristmasPolicy;
-use Illuminate\Support\Facades\Response;
+use Illuminate\Http\Response;
 
 #[Authorize(RequireDateChristmasPolicy::class)]
 class PolicyAuthorizationTestController1
 {
-    public function __invoke()
+    public function __invoke(): Response
     {
-        return Response::noContent();
+        return new Response(status: 204);
     }
 }

@@ -19,9 +19,9 @@ class MakeRequirementCommand extends GeneratorCommand
     /**
      * Execute the console command.
      *
+     * @throws FileNotFoundException
      * @return bool|null
      *
-     * @throws FileNotFoundException
      */
     public function handle(): ?bool
     {
@@ -56,9 +56,9 @@ class MakeRequirementCommand extends GeneratorCommand
      * Build the class with the given name.
      *
      * @param  string  $name
+     * @throws FileNotFoundException
      * @return string
      *
-     * @throws FileNotFoundException
      */
     protected function buildClass($name): string
     {

@@ -2,8 +2,7 @@
 
 namespace Codestage\Authorization\Tests\Fakes\Authorization\Handlers;
 
-use Codestage\Authorization\Contracts\IRequirement;
-use Codestage\Authorization\Contracts\IRequirementHandler;
+use Codestage\Authorization\Contracts\{IRequirement, IRequirementHandler};
 use Codestage\Authorization\Tests\Fakes\Authorization\Requirement\DateRequirement;
 
 /**

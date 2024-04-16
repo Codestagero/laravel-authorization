@@ -3,19 +3,20 @@
 namespace Codestage\Authorization\Models;
 
 use Carbon\Carbon;
+use Codestage\Authorization\Contracts\IPermissionEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\{Collection, Str};
+use Illuminate\Support\{Enumerable, Str};
 
 /**
- * @template    TPermission of \Codestage\Authorization\Contracts\IPermissionEnum
+ * @template    TPermission of IPermissionEnum
  *
  * @property    string                      $id
  * @property    string                      $key
  * @property    string                      $name
  * @property    Carbon                      $created_at
  * @property    Carbon                      $updated_at
- * @property    Collection<TPermission>     $permissions
+ * @property    Enumerable<TPermission>     $permissions
  */
 class Role extends Model
 {

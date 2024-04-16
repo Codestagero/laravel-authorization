@@ -7,7 +7,7 @@ use Codestage\Authorization\Tests\Fakes\Http\Controllers\SimpleAuthorizationTest
     SimpleAuthorizationController2,
     SimpleAuthorizationController3};
 use Codestage\Authorization\Tests\TestCase;
-use Illuminate\Support\Facades\{Route, URL};
+use Illuminate\Contracts\Routing\{Registrar, UrlGenerator};
 use Illuminate\Testing\TestResponse;
 
 /**
@@ -22,14 +22,18 @@ class SimpleAuthorizationTest extends TestCase
     public function Authorize_WhenClassRequiresAuthorizationAndNotAuthenticated_Unauthorized(): void
     {
         // Arrange
-        Route::get('test1', [SimpleAuthorizationController1::class, 'requiresAuth'])->middleware([AuthorizationMiddleware::class])->name('test1');
-        Route::get('test2', [SimpleAuthorizationController1::class, 'requiresAuthAsWell'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', [SimpleAuthorizationController1::class, 'requiresAuth'])->middleware([AuthorizationMiddleware::class])->name('test1');
+        $router->get('test2', [SimpleAuthorizationController1::class, 'requiresAuthAsWell'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
-            $this->getJson(URL::route('test2'))
+            $this->getJson($urlGenerator->route('test1')),
+            $this->getJson($urlGenerator->route('test2'))
         ];
 
         // Assert
@@ -44,14 +48,18 @@ class SimpleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser();
-        Route::get('test1', [SimpleAuthorizationController1::class, 'requiresAuth'])->middleware([AuthorizationMiddleware::class])->name('test1');
-        Route::get('test2', [SimpleAuthorizationController1::class, 'requiresAuthAsWell'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', [SimpleAuthorizationController1::class, 'requiresAuth'])->middleware([AuthorizationMiddleware::class])->name('test1');
+        $router->get('test2', [SimpleAuthorizationController1::class, 'requiresAuthAsWell'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
-            $this->getJson(URL::route('test2'))
+            $this->getJson($urlGenerator->route('test1')),
+            $this->getJson($urlGenerator->route('test2'))
         ];
 
         // Assert
@@ -66,14 +74,18 @@ class SimpleAuthorizationTest extends TestCase
     public function Authorize_WhenMethodRequiresAuthorizationAndNotAuthenticated_Unauthorized(): void
     {
         // Arrange
-        Route::get('test1', [SimpleAuthorizationController2::class, 'doesNotRequireAuth'])->middleware([AuthorizationMiddleware::class])->name('test1');
-        Route::get('test2', [SimpleAuthorizationController2::class, 'requiresAuthAsWell'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', [SimpleAuthorizationController2::class, 'doesNotRequireAuth'])->middleware([AuthorizationMiddleware::class])->name('test1');
+        $router->get('test2', [SimpleAuthorizationController2::class, 'requiresAuthAsWell'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
-            $this->getJson(URL::route('test2'))
+            $this->getJson($urlGenerator->route('test1')),
+            $this->getJson($urlGenerator->route('test2'))
         ];
 
         // Assert
@@ -88,14 +100,18 @@ class SimpleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser();
-        Route::get('test1', [SimpleAuthorizationController2::class, 'doesNotRequireAuth'])->middleware([AuthorizationMiddleware::class])->name('test1');
-        Route::get('test2', [SimpleAuthorizationController2::class, 'requiresAuthAsWell'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', [SimpleAuthorizationController2::class, 'doesNotRequireAuth'])->middleware([AuthorizationMiddleware::class])->name('test1');
+        $router->get('test2', [SimpleAuthorizationController2::class, 'requiresAuthAsWell'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
-            $this->getJson(URL::route('test2'))
+            $this->getJson($urlGenerator->route('test1')),
+            $this->getJson($urlGenerator->route('test2'))
         ];
 
         // Assert
@@ -110,14 +126,18 @@ class SimpleAuthorizationTest extends TestCase
     public function Authorize_WhenClassRequiresAuthButMethodBypassesItAndNotAuthenticated_Unauthorized(): void
     {
         // Arrange
-        Route::get('test1', [SimpleAuthorizationController3::class, 'doesNotRequireAuth'])->middleware([AuthorizationMiddleware::class])->name('test1');
-        Route::get('test2', [SimpleAuthorizationController3::class, 'requiresAuthAsWell'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', [SimpleAuthorizationController3::class, 'doesNotRequireAuth'])->middleware([AuthorizationMiddleware::class])->name('test1');
+        $router->get('test2', [SimpleAuthorizationController3::class, 'requiresAuthAsWell'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
-            $this->getJson(URL::route('test2'))
+            $this->getJson($urlGenerator->route('test1')),
+            $this->getJson($urlGenerator->route('test2'))
         ];
 
         // Assert
@@ -132,14 +152,18 @@ class SimpleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser();
-        Route::get('test1', [SimpleAuthorizationController3::class, 'doesNotRequireAuth'])->middleware([AuthorizationMiddleware::class])->name('test1');
-        Route::get('test2', [SimpleAuthorizationController3::class, 'requiresAuthAsWell'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', [SimpleAuthorizationController3::class, 'doesNotRequireAuth'])->middleware([AuthorizationMiddleware::class])->name('test1');
+        $router->get('test2', [SimpleAuthorizationController3::class, 'requiresAuthAsWell'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
-            $this->getJson(URL::route('test2'))
+            $this->getJson($urlGenerator->route('test1')),
+            $this->getJson($urlGenerator->route('test2'))
         ];
 
         // Assert

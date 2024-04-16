@@ -4,17 +4,17 @@ namespace Codestage\Authorization\Tests\Fakes\Http\Controllers\PermissionsAuthor
 
 use Codestage\Authorization\Attributes\Authorize;
 use Codestage\Authorization\Tests\Fakes\Enums\FakePermission;
-use Illuminate\Support\Facades\Response;
+use Illuminate\Http\Response;
 
 #[Authorize(permissions: FakePermission::ExamplePermission1)]
 #[Authorize(permissions: FakePermission::ExamplePermission3)]
 class PermissionAuthorizationController3
 {
     /**
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function __invoke(): \Illuminate\Http\Response
+    public function __invoke(): Response
     {
-        return Response::noContent();
+        return new Response(status: 204);
     }
 }

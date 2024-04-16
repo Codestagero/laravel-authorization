@@ -66,12 +66,15 @@ class InstallCommand extends Command
         if (!is_dir($this->laravel->basePath('app/Authorization'))) {
             mkdir($this->laravel->basePath('app/Authorization'));
         }
+
         if (!is_dir($this->laravel->basePath('app/Authorization/Handlers'))) {
             mkdir($this->laravel->basePath('app/Authorization/Handlers'));
         }
+
         if (!is_dir($this->laravel->basePath('app/Authorization/Policies'))) {
             mkdir($this->laravel->basePath('app/Authorization/Policies'));
         }
+
         if (!is_dir($this->laravel->basePath('app/Authorization/Requirements'))) {
             mkdir($this->laravel->basePath('app/Authorization/Requirements'));
         }
@@ -83,6 +86,7 @@ class InstallCommand extends Command
 
         // Check whether the user has default laravel policies and warn them if they do
         $defaultPoliciesPath = $this->laravel->basePath('app/Policies');
+
         if (is_dir($defaultPoliciesPath)) {
             if ($this->checkDirectoryEmpty($defaultPoliciesPath)) {
                 unlink($defaultPoliciesPath);
@@ -135,7 +139,7 @@ class InstallCommand extends Command
         ]);
 
         // Extract path before last slash (supposedly the Enums directory)
-        $directory = $this->laravel->basePath(substr(self::PermissionEnumPath, 0, strrpos(self::PermissionEnumPath, '/')));
+        $directory = $this->laravel->basePath(mb_substr(self::PermissionEnumPath, 0, mb_strrpos(self::PermissionEnumPath, '/')));
 
         // If the directory does not exist, create it
         if (!is_dir($directory)) {
@@ -165,8 +169,8 @@ class InstallCommand extends Command
 
         // Replace interpolations from the replacements array
         foreach ($replacements as $key => $value) {
-            $stub = (string)str_ireplace('{{ ' . $key . ' }}', $value, $stub);
-            $stub = (string)str_ireplace('{{' . $key . '}}', $value, $stub);
+            $stub = (string) str_ireplace('{{ ' . $key . ' }}', $value, $stub);
+            $stub = (string) str_ireplace('{{' . $key . '}}', $value, $stub);
         }
 
         // Return the resulting string
@@ -206,19 +210,20 @@ class InstallCommand extends Command
 
         $groups = $reflection->getProperty('middlewareGroups')->getDefaultValue();
 
-        if (!is_array($groups)) {
+        if (!\is_array($groups)) {
             return false;
         }
 
         // Build the middleware class' FQN
         $middlewareQualifiedName = AuthorizationMiddleware::class;
+
         if (!str_starts_with($middlewareQualifiedName, '\\')) {
             $middlewareQualifiedName = '\\' . $middlewareQualifiedName;
         }
 
         // Add the middleware to each group
         foreach ($groups as $group => $groupMiddleware) {
-            if (!in_array(AuthorizationMiddleware::class, $groupMiddleware)) {
+            if (!\in_array(AuthorizationMiddleware::class, $groupMiddleware)) {
                 $newFileContents = preg_replace(
                     '/([\'"]' . $group . '[\'"] => \\[[a-zA-Z\\s:,\\/\\\\\'\"]+?)([ \\t]+)((?:(?:\\w|\\\\)+)?SubstituteBindings::class)/m',
                     '$1$2' . $middlewareQualifiedName . "::class,\n$2$3",
@@ -240,13 +245,16 @@ class InstallCommand extends Command
     private function checkDirectoryEmpty(string $directory): bool
     {
         $handle = opendir($directory);
+
         while (($entry = readdir($handle)) !== false) {
-            if ($entry !== "." && $entry !== "..") {
+            if ($entry !== '.' && $entry !== '..') {
                 closedir($handle);
+
                 return false;
             }
         }
         closedir($handle);
+
         return true;
     }
 }

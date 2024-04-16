@@ -2,10 +2,7 @@
 
 namespace Codestage\Authorization\Providers;
 
-use Codestage\Authorization\Console\Commands\InstallCommand;
-use Codestage\Authorization\Console\Commands\MakePolicyCommand;
-use Codestage\Authorization\Console\Commands\MakeRequirementCommand;
-use Codestage\Authorization\Console\Commands\MakeRequirementHandlerCommand;
+use Codestage\Authorization\Console\Commands\{InstallCommand, MakePolicyCommand, MakeRequirementCommand, MakeRequirementHandlerCommand};
 use Codestage\Authorization\Contracts\Services\{IAuthorizationCheckService, IAuthorizationService};
 use Codestage\Authorization\Services\{AuthorizationCheckService, AuthorizationService};
 use Illuminate\Foundation\Console\PolicyMakeCommand as BaseMakePolicyCommand;

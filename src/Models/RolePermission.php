@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 
 /**
- * @template    TPermission of \Codestage\Authorization\Contracts\IPermissionEnum
+ * @template    TPermission of IPermissionEnum
  *
  * @property    string          $role_id
  * @property    TPermission     $permission
