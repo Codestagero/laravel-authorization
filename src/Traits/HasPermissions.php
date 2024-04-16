@@ -5,11 +5,11 @@ namespace Codestage\Authorization\Traits;
 use Codestage\Authorization\Contracts\IPermissionEnum;
 use Codestage\Authorization\Models\{Role, RolePermission, UserRole};
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Support\Collection;
+use Illuminate\Support\{Collection, Enumerable};
 
 /**
  * @template        TPermission of IPermissionEnum
- * @property-read   Collection<Role>        $roles
+ * @property-read   Enumerable<Role>        $roles
  * @method          HasManyThrough  hasManyThrough(string $related, string $through, string|null $firstKey = null, string|null $secondKey = null, string|null $localKey = null, string|null $secondLocalKey = null)
  */
 trait HasPermissions
@@ -27,11 +27,11 @@ trait HasPermissions
     /**
      * Get a list of this user's permissions.
      *
-     * @return Collection<TPermission>
+     * @return Enumerable<TPermission>
      */
-    public function getPermissions(): Collection
+    public function getPermissions(): Enumerable
     {
-        $permissions = Collection::make();
+        $permissions = new Collection();
 
         /**
          * @var Role $role

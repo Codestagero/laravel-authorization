@@ -2,8 +2,7 @@
 
 namespace Codestage\Authorization\Contracts\Services;
 
-use Codestage\Authorization\Contracts\IPolicy;
-use Codestage\Authorization\Contracts\IRequirement;
+use Codestage\Authorization\Contracts\{IPolicy, IRequirement};
 use Illuminate\Contracts\Container\BindingResolutionException;
 
 /**
@@ -16,8 +15,8 @@ interface IAuthorizationService
      *
      * @param TResource|null $resource
      * @param IPolicy|class-string $policy
-     * @return bool
      * @throws BindingResolutionException
+     * @return bool
      */
     public function authorizePolicy(mixed $resource, IPolicy|string $policy): bool;
 

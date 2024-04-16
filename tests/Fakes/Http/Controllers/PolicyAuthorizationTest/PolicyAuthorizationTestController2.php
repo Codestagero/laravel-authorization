@@ -5,13 +5,13 @@ namespace Codestage\Authorization\Tests\Fakes\Http\Controllers\PolicyAuthorizati
 use Codestage\Authorization\Attributes\Authorize;
 use Codestage\Authorization\Tests\Fakes\Authorization\Policies\PolicyThatRequiresUserProfile;
 use Codestage\Authorization\Tests\Fakes\Models\UserProfile;
-use Illuminate\Support\Facades\Response;
+use Illuminate\Http\Response;
 
 class PolicyAuthorizationTestController2
 {
     #[Authorize(PolicyThatRequiresUserProfile::class)]
-    public function __invoke(UserProfile $profile)
+    public function __invoke(UserProfile $profile): Response
     {
-        return Response::noContent();
+        return new Response(status: 204);
     }
 }

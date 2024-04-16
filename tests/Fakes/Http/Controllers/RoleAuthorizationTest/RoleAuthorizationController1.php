@@ -3,16 +3,16 @@
 namespace Codestage\Authorization\Tests\Fakes\Http\Controllers\RoleAuthorizationTest;
 
 use Codestage\Authorization\Attributes\Authorize;
-use Illuminate\Support\Facades\Response;
+use Illuminate\Http\Response;
 
 #[Authorize(roles: 'test-role-1')]
 class RoleAuthorizationController1
 {
     /**
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function __invoke(): \Illuminate\Http\Response
+    public function __invoke(): Response
     {
-        return Response::noContent();
+        return new Response(status: 204);
     }
 }

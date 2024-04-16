@@ -9,5 +9,4 @@ use Codestage\Authorization\Tests\Fakes\Authorization\Handlers\SameAuthorRequire
 #[HandledBy(SameAuthorRequirementHandler::class)]
 class SameAuthorRequirement implements IRequirement
 {
-
 }

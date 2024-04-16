@@ -2,17 +2,16 @@
 
 namespace Codestage\Authorization\Tests\Feature;
 
-use Carbon\Carbon;
 use Codestage\Authorization\Middleware\AuthorizationMiddleware;
-use Codestage\Authorization\Tests\Fakes\Http\Controllers\PolicyAuthorizationTest\PolicyAuthorizationTestController1;
 use Codestage\Authorization\Tests\Fakes\Http\Controllers\ResourceAuthorizationTest\DocumentController1;
-use Codestage\Authorization\Tests\Fakes\Models\Document;
-use Codestage\Authorization\Tests\Fakes\Models\User;
+use Codestage\Authorization\Tests\Fakes\Models\{Document, User};
 use Codestage\Authorization\Tests\TestCase;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Contracts\Routing\{Registrar, UrlGenerator};
 use Illuminate\Testing\TestResponse;
 
+/**
+ * @coversNothing
+ */
 class ResourceAuthorizationTest extends TestCase
 {
     /**
@@ -22,18 +21,22 @@ class ResourceAuthorizationTest extends TestCase
     public function Authorize_WhenNotAuthenticated_Unauthorized(): void
     {
         // Arrange
-        Route::get('test1/{document}', DocumentController1::class)
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1/{document}', DocumentController1::class)
             ->middleware([AuthorizationMiddleware::class])
             ->name('test1');
         $user = User::query()->create();
         $document = Document::query()->create([
             'user_id' => $user->getKey()
         ]);
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1', $document)),
+            $this->getJson($urlGenerator->route('test1', $document)),
         ];
 
         // Assert
@@ -48,18 +51,22 @@ class ResourceAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser();
-        Route::get('test1/{document}', DocumentController1::class)
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1/{document}', DocumentController1::class)
             ->middleware([AuthorizationMiddleware::class])
             ->name('test1');
         $user = User::query()->create();
         $document = Document::query()->create([
             'user_id' => $user->getKey()
         ]);
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1', $document)),
+            $this->getJson($urlGenerator->route('test1', $document)),
         ];
 
         // Assert
@@ -73,18 +80,22 @@ class ResourceAuthorizationTest extends TestCase
     public function Authorize_WhenPasses_Success(): void
     {
         // Arrange
-        Route::get('test1/{document}', DocumentController1::class)
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1/{document}', DocumentController1::class)
             ->middleware([AuthorizationMiddleware::class])
             ->name('test1');
         $user = $this->authenticateUser();
         $document = Document::query()->create([
             'user_id' => $user->getKey()
         ]);
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1', $document)),
+            $this->getJson($urlGenerator->route('test1', $document)),
         ];
 
         // Assert

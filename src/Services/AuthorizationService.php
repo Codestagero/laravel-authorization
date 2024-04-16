@@ -3,15 +3,11 @@
 namespace Codestage\Authorization\Services;
 
 use Codestage\Authorization\Attributes\HandledBy;
-use Codestage\Authorization\Contracts\IPolicy;
-use Codestage\Authorization\Contracts\IRequirement;
-use Codestage\Authorization\Contracts\IRequirementHandler;
-use Codestage\Authorization\Contracts\IResourceRequirementHandler;
 use Codestage\Authorization\Contracts\Services\IAuthorizationService;
-use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Contracts\Container\Container;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
+use Codestage\Authorization\Contracts\{IPolicy, IRequirement, IRequirementHandler, IResourceRequirementHandler};
+use Exception;
+use Illuminate\Contracts\Container\{BindingResolutionException, Container};
+use Illuminate\Support\{Collection, Enumerable};
 use ReflectionClass;
 
 class AuthorizationService implements IAuthorizationService
@@ -32,12 +28,13 @@ class AuthorizationService implements IAuthorizationService
     public function authorizePolicy(mixed $resource, IPolicy|string $policy): bool
     {
         // If the policy is not instantiated, get an instance
-        if (is_string($policy)) {
+        if (\is_string($policy)) {
             $policy = $this->_container->make($policy);
         }
 
         // Check that all the requirements defined by this policy pass
         $requirements = $policy->requirements();
+
         return $this->authorizeRequirements($resource, $requirements);
     }
 
@@ -58,12 +55,12 @@ class AuthorizationService implements IAuthorizationService
                     return $handler->handle($requirement);
                 } else if ($handler instanceof IResourceRequirementHandler) {
                     if ($resource === null) {
-                        throw new \Exception("Attempt to use resource handler for authorizing without a resource.");
+                        throw new Exception('Attempt to use resource handler for authorizing without a resource.');
                     }
 
                     return $handler->handle($requirement, $resource);
                 } else {
-                    throw new BindingResolutionException( $handlerClassName . " was not resolved to a valid requirement handler.");
+                    throw new BindingResolutionException($handlerClassName . ' was not resolved to a valid requirement handler.');
                 }
             });
 
@@ -81,9 +78,9 @@ class AuthorizationService implements IAuthorizationService
      * Get the handlers that can handle the given requirement.
      *
      * @param IRequirement $requirement
-     * @return Collection<class-string<IRequirementHandler|IResourceRequirementHandler>>
+     * @return Enumerable<class-string<IRequirementHandler|IResourceRequirementHandler>>
      */
-    private function _getRequirementHandlers(IRequirement $requirement): Collection
+    private function _getRequirementHandlers(IRequirement $requirement): Enumerable
     {
         // Reflect on the requirement class
         $reflection = new ReflectionClass($requirement);
@@ -99,9 +96,9 @@ class AuthorizationService implements IAuthorizationService
             /** @var HandledBy $instance */
             $instance = $attribute->newInstance();
 
-            if (is_array($instance->handler)) {
+            if (\is_array($instance->handler)) {
                 $handlers->push(...$instance->handler);
-            } else if (is_string($instance->handler)) {
+            } else if (\is_string($instance->handler)) {
                 $handlers->push($instance->handler);
             }
         }

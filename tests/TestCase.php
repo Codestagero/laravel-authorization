@@ -8,10 +8,10 @@ use Codestage\Authorization\Providers\AuthorizationServiceProvider;
 use Codestage\Authorization\Tests\Fakes\Enums\FakePermission;
 use Codestage\Authorization\Tests\Fakes\Models\User;
 use Illuminate\Config\Repository;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Contracts\Auth\Factory as AuthManager;
+use Illuminate\Database\Schema\{Blueprint, Builder as SchemaBuilder};
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Foundation\Testing\{RefreshDatabase, WithFaker};
-use Illuminate\Support\Facades\{Auth, Schema};
 use Illuminate\Support\Str;
 use Mockery;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
@@ -47,16 +47,18 @@ abstract class TestCase extends OrchestraTestCase
         $configRepository->set('authorization.permissions_enum', FakePermission::class);
 
         // Create a fake table
-        Schema::create('users', function (Blueprint $table): void {
+        /** @var SchemaBuilder $schema */
+        $schema = $this->app->make(SchemaBuilder::class);
+        $schema->create('users', function (Blueprint $table): void {
             $table->id();
             $table->timestamps();
         });
-        Schema::create('user_profiles', function (Blueprint $table): void {
+        $schema->create('user_profiles', function (Blueprint $table): void {
             $table->id();
             $table->foreignIdFor(User::class);
             $table->timestamps();
         });
-        Schema::create('documents', function (Blueprint $table): void {
+        $schema->create('documents', function (Blueprint $table): void {
             $table->id();
             $table->foreignIdFor(User::class);
             $table->timestamps();
@@ -81,10 +83,13 @@ abstract class TestCase extends OrchestraTestCase
     protected function authenticateUser(iterable $permissions = [], iterable $roles = []): Authenticatable
     {
         // Create the user
+        /** @var User $user */
         $user = User::query()->create();
 
         // Authenticate as this user
-        Auth::login($user);
+        /** @var AuthManager $authManager */
+        $authManager = $this->app->make(AuthManager::class);
+        $authManager->guard()->login($user);
 
         // Accumulate all created roles in an array in order to assign them to the user at the end
         $createdRoles = [];

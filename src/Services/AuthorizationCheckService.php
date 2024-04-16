@@ -4,25 +4,24 @@ namespace Codestage\Authorization\Services;
 
 use Closure;
 use Codestage\Authorization\Attributes\{AllowAnonymous, Authorize};
-use Illuminate\Contracts\Container\Container;
 use Codestage\Authorization\Contracts\{IPermissionEnum,
     IPolicy,
     Services\IAuthorizationCheckService,
     Services\IAuthorizationService};
-use Codestage\Authorization\Requirements\HasPermissionRequirement;
-use Codestage\Authorization\Requirements\HasRoleRequirement;
+use Codestage\Authorization\Requirements\{HasPermissionRequirement, HasRoleRequirement};
 use Codestage\Authorization\Traits\HasPermissions;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Auth\Guard as AuthManager;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
+use Illuminate\Support\{Collection, Enumerable};
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
 use function get_class;
 use function in_array;
-use function is_array;
 use function is_string;
 
 /**
@@ -75,9 +74,9 @@ class AuthorizationCheckService implements IAuthorizationCheckService
      * @param class-string $className
      * @param string $methodName
      * @throws ReflectionException
-     * @return Collection<ReflectionAttribute>
+     * @return Enumerable<ReflectionAttribute>
      */
-    private function extractAttributesFromClassMethod(string $className, string $methodName): Collection
+    private function extractAttributesFromClassMethod(string $className, string $methodName): Enumerable
     {
         $reflectionClass = new ReflectionClass($className);
         $method = $reflectionClass->getMethod($methodName);
@@ -89,9 +88,9 @@ class AuthorizationCheckService implements IAuthorizationCheckService
     /**
      * @param class-string $className
      * @throws ReflectionException
-     * @return Collection
+     * @return Enumerable<ReflectionAttribute>
      */
-    private function extractAttributesFromClass(string $className): Collection
+    private function extractAttributesFromClass(string $className): Enumerable
     {
         $reflectionClass = new ReflectionClass($className);
 
@@ -105,9 +104,9 @@ class AuthorizationCheckService implements IAuthorizationCheckService
      * @param class-string $className
      * @param string $methodName
      * @throws ReflectionException
-     * @return Collection<ReflectionAttribute>
+     * @return Enumerable<ReflectionAttribute>
      */
-    private function computeAttributesForClassMethod(string $className, string $methodName): Collection
+    private function computeAttributesForClassMethod(string $className, string $methodName): Enumerable
     {
         $classAttributes = $this->extractAttributesFromClass($className);
         $methodAttributes = $this->extractAttributesFromClassMethod($className, $methodName);
@@ -120,9 +119,9 @@ class AuthorizationCheckService implements IAuthorizationCheckService
      *
      * @param Closure $closure
      * @throws ReflectionException
-     * @return Collection
+     * @return Enumerable<ReflectionAttribute>
      */
-    private function computeAttributesForClosure(Closure $closure): Collection
+    private function computeAttributesForClosure(Closure $closure): Enumerable
     {
         $reflectionFunction = new ReflectionFunction($closure);
 
@@ -133,14 +132,14 @@ class AuthorizationCheckService implements IAuthorizationCheckService
     /**
      * Check whether an action can be accessed when guarded by the given attributes.
      *
-     * @param Collection<ReflectionAttribute>|ReflectionAttribute[] $attributes
-     * @return bool
+     * @param Enumerable<ReflectionAttribute>|Arrayable<ReflectionAttribute>|iterable<ReflectionAttribute> $attributes
      * @throws AuthenticationException
+     * @return bool
      */
-    private function canAccessThroughAttributes(Collection|array $attributes): bool
+    private function canAccessThroughAttributes(Enumerable|iterable|Arrayable $attributes): bool
     {
-        // Make sure the attributes are a Collection
-        if (is_array($attributes)) {
+        // Make sure the attributes are enumerable
+        if (!($attributes instanceof Enumerable)) {
             $attributes = new Collection($attributes);
         }
 
@@ -187,8 +186,9 @@ class AuthorizationCheckService implements IAuthorizationCheckService
         // Add role policies
         if (!!$attribute->roles) {
             $roles = new Collection($attribute->roles);
+
             foreach ($roles as $role) {
-                $policies->push(new class ($role) implements IPolicy {
+                $policies->push(new class($role) implements IPolicy {
                     /** Constructor method. */
                     public function __construct(public readonly string $role)
                     {
@@ -206,8 +206,9 @@ class AuthorizationCheckService implements IAuthorizationCheckService
         // Add permission policies
         if (!!$attribute->permissions) {
             $permissions = new Collection($attribute->permissions);
+
             foreach ($permissions as $permission) {
-                $policies->push(new class ($permission) implements IPolicy {
+                $policies->push(new class($permission) implements IPolicy {
                     /** Constructor method. */
                     public function __construct(public readonly IPermissionEnum $permission)
                     {
@@ -229,9 +230,7 @@ class AuthorizationCheckService implements IAuthorizationCheckService
 
         // Instantiate all policies and run them
         return $policies->map(fn (string|IPolicy $policy) => is_string($policy) ? $this->_container->make($policy) : $policy)
-            ->some(function (IPolicy $policy) {
-                return $this->_authorizationService->authorizePolicy(null, $policy);
-            });
+            ->some(fn (IPolicy $policy) => $this->_authorizationService->authorizePolicy(null, $policy));
     }
 
     /**
@@ -239,9 +238,9 @@ class AuthorizationCheckService implements IAuthorizationCheckService
      *
      * @param class-string $className
      * @param class-string $methodName
-     * @return bool
      * @throws AuthenticationException
      * @throws ReflectionException
+     * @return bool
      */
     public function canAccessControllerMethod(string $className, string $methodName): bool
     {
@@ -254,9 +253,9 @@ class AuthorizationCheckService implements IAuthorizationCheckService
      * Check whether the given controller method can be accessed in the current request context.
      *
      * @param Closure $closure
-     * @return bool
      * @throws AuthenticationException
      * @throws ReflectionException
+     * @return bool
      */
     public function canAccessClosure(Closure $closure): bool
     {

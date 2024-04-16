@@ -37,9 +37,9 @@ class MakeRequirementHandlerCommand extends GeneratorCommand
      * Build the class with the given name.
      *
      * @param  string  $name
+     * @throws FileNotFoundException
      * @return string
      *
-     * @throws FileNotFoundException
      */
     protected function buildClass($name): string
     {

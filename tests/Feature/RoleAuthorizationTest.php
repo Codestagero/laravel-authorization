@@ -8,7 +8,7 @@ use Codestage\Authorization\Tests\Fakes\Http\Controllers\RoleAuthorizationTest\{
     RoleAuthorizationController3,
     RoleAuthorizationController4};
 use Codestage\Authorization\Tests\TestCase;
-use Illuminate\Support\Facades\{Route, URL};
+use Illuminate\Contracts\Routing\{Registrar, UrlGenerator};
 use Illuminate\Testing\TestResponse;
 
 /**
@@ -23,12 +23,16 @@ class RoleAuthorizationTest extends TestCase
     public function OnlyClassGuard_WhenClassRequiresAuthorizationAndNotAuthenticated_Unauthorized(): void
     {
         // Arrange
-        Route::get('test1', RoleAuthorizationController1::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', RoleAuthorizationController1::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
+            $this->getJson($urlGenerator->route('test1')),
         ];
 
         // Assert
@@ -43,12 +47,16 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser();
-        Route::get('test1', RoleAuthorizationController1::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', RoleAuthorizationController1::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
+            $this->getJson($urlGenerator->route('test1')),
         ];
 
         // Assert
@@ -63,12 +71,16 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser(roles: ['test-role-1']);
-        Route::get('test1', RoleAuthorizationController1::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', RoleAuthorizationController1::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
+            $this->getJson($urlGenerator->route('test1')),
         ];
 
         // Assert
@@ -82,12 +94,16 @@ class RoleAuthorizationTest extends TestCase
     public function MultipleOptional_WhenClassRequiresAuthorizationAndNotAuthenticated_Unauthorized(): void
     {
         // Arrange
-        Route::get('test1', RoleAuthorizationController2::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', RoleAuthorizationController2::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
+            $this->getJson($urlGenerator->route('test1')),
         ];
 
         // Assert
@@ -102,12 +118,16 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser();
-        Route::get('test1', RoleAuthorizationController2::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', RoleAuthorizationController2::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
+            $this->getJson($urlGenerator->route('test1')),
         ];
 
         // Assert
@@ -122,12 +142,16 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser(roles: ['test-role-2']);
-        Route::get('test1', RoleAuthorizationController2::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', RoleAuthorizationController2::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
+            $this->getJson($urlGenerator->route('test1')),
         ];
 
         // Assert
@@ -142,12 +166,16 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser(roles: ['test-role-1']);
-        Route::get('test1', RoleAuthorizationController2::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', RoleAuthorizationController2::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
+            $this->getJson($urlGenerator->route('test1')),
         ];
 
         // Assert
@@ -162,12 +190,16 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser(roles: ['test-role-3']);
-        Route::get('test1', RoleAuthorizationController2::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', RoleAuthorizationController2::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
+            $this->getJson($urlGenerator->route('test1')),
         ];
 
         // Assert
@@ -182,12 +214,16 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser(roles: ['test-role-1', 'test-role-3']);
-        Route::get('test1', RoleAuthorizationController2::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', RoleAuthorizationController2::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
+            $this->getJson($urlGenerator->route('test1')),
         ];
 
         // Assert
@@ -201,12 +237,16 @@ class RoleAuthorizationTest extends TestCase
     public function MultipleRequired_WhenNotAuthenticated_Unauthorized(): void
     {
         // Arrange
-        Route::get('test1', RoleAuthorizationController3::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', RoleAuthorizationController3::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
+            $this->getJson($urlGenerator->route('test1')),
         ];
 
         // Assert
@@ -221,12 +261,16 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser();
-        Route::get('test1', RoleAuthorizationController3::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', RoleAuthorizationController3::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
+            $this->getJson($urlGenerator->route('test1')),
         ];
 
         // Assert
@@ -241,12 +285,16 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser(roles: ['test-role-1']);
-        Route::get('test1', RoleAuthorizationController3::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', RoleAuthorizationController3::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
+            $this->getJson($urlGenerator->route('test1')),
         ];
 
         // Assert
@@ -261,12 +309,16 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser(roles: ['test-role-3']);
-        Route::get('test1', RoleAuthorizationController3::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', RoleAuthorizationController3::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
+            $this->getJson($urlGenerator->route('test1')),
         ];
 
         // Assert
@@ -281,12 +333,16 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser(roles: ['test-role-1', 'test-role-3']);
-        Route::get('test1', RoleAuthorizationController3::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', RoleAuthorizationController3::class)->middleware([AuthorizationMiddleware::class])->name('test1');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
+            $this->getJson($urlGenerator->route('test1')),
         ];
 
         // Assert
@@ -300,14 +356,18 @@ class RoleAuthorizationTest extends TestCase
     public function MultipleRequiredOnClassAndMethod_WhenNotAuthenticated_Unauthorized(): void
     {
         // Arrange
-        Route::get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([AuthorizationMiddleware::class])->name('test1');
-        Route::get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([AuthorizationMiddleware::class])->name('test1');
+        $router->get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
-            $this->getJson(URL::route('test2')),
+            $this->getJson($urlGenerator->route('test1')),
+            $this->getJson($urlGenerator->route('test2')),
         ];
 
         // Assert
@@ -323,14 +383,18 @@ class RoleAuthorizationTest extends TestCase
     {
         // Arrange
         $this->authenticateUser();
-        Route::get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([AuthorizationMiddleware::class])->name('test1');
-        Route::get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([AuthorizationMiddleware::class])->name('test1');
+        $router->get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
-            $this->getJson(URL::route('test2')),
+            $this->getJson($urlGenerator->route('test1')),
+            $this->getJson($urlGenerator->route('test2')),
         ];
 
         // Assert
@@ -349,14 +413,18 @@ class RoleAuthorizationTest extends TestCase
             'test-role-1',
             'test-role-2'
         ]);
-        Route::get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([AuthorizationMiddleware::class])->name('test1');
-        Route::get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([AuthorizationMiddleware::class])->name('test1');
+        $router->get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
-            $this->getJson(URL::route('test2')),
+            $this->getJson($urlGenerator->route('test1')),
+            $this->getJson($urlGenerator->route('test2')),
         ];
 
         // Assert
@@ -375,14 +443,18 @@ class RoleAuthorizationTest extends TestCase
             'test-role-1',
             'test-role-3'
         ]);
-        Route::get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([AuthorizationMiddleware::class])->name('test1');
-        Route::get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([AuthorizationMiddleware::class])->name('test1');
+        $router->get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
-            $this->getJson(URL::route('test2')),
+            $this->getJson($urlGenerator->route('test1')),
+            $this->getJson($urlGenerator->route('test2')),
         ];
 
         // Assert
@@ -402,14 +474,18 @@ class RoleAuthorizationTest extends TestCase
             'test-role-2',
             'test-role-3'
         ]);
-        Route::get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([AuthorizationMiddleware::class])->name('test1');
-        Route::get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var Registrar $router */
+        $router = $this->app->make(Registrar::class);
+        $router->get('test1', [RoleAuthorizationController4::class, 'onlyRequiresClassRoles'])->middleware([AuthorizationMiddleware::class])->name('test1');
+        $router->get('test2', [RoleAuthorizationController4::class, 'requiresClassAndMethodRoles'])->middleware([AuthorizationMiddleware::class])->name('test2');
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
 
         // Act
         /** @var TestResponse[] $responses */
         $responses = [
-            $this->getJson(URL::route('test1')),
-            $this->getJson(URL::route('test2')),
+            $this->getJson($urlGenerator->route('test1')),
+            $this->getJson($urlGenerator->route('test2')),
         ];
 
         // Assert
