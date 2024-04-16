@@ -10,13 +10,13 @@ use Illuminate\Http\Request;
 use ReflectionException;
 use Throwable;
 
-class AuthorizationMiddleware
+readonly class AuthorizationMiddleware
 {
     /**
      * AuthorizeMiddleware constructor method.
      */
     public function __construct(
-        private readonly IAuthorizationCheckService $_authorizationService
+        private IAuthorizationCheckService $_authorizationService
     ) {
     }
 

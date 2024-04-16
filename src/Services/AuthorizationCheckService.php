@@ -20,9 +20,6 @@ use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
-use function get_class;
-use function in_array;
-use function is_string;
 
 /**
  * @internal
@@ -59,7 +56,7 @@ class AuthorizationCheckService implements IAuthorizationCheckService
      */
     private function isAuthorizationAttribute(object|string $class): bool
     {
-        $className = is_string($class) ? $class : get_class($class);
+        $className = \is_string($class) ? $class : \get_class($class);
 
         foreach (self::AuthorizationAttributes as $attribute) {
             if (is_subclass_of($className, $attribute) || $className === $attribute) {
@@ -126,7 +123,7 @@ class AuthorizationCheckService implements IAuthorizationCheckService
         $reflectionFunction = new ReflectionFunction($closure);
 
         return (new Collection($reflectionFunction->getAttributes()))
-            ->filter(fn (ReflectionAttribute $attribute) => in_array($attribute->getName(), self::AuthorizationAttributes));
+            ->filter(fn (ReflectionAttribute $attribute) => \in_array($attribute->getName(), self::AuthorizationAttributes));
     }
 
     /**
@@ -229,7 +226,7 @@ class AuthorizationCheckService implements IAuthorizationCheckService
         }
 
         // Instantiate all policies and run them
-        return $policies->map(fn (string|IPolicy $policy) => is_string($policy) ? $this->_container->make($policy) : $policy)
+        return $policies->map(fn (string|IPolicy $policy) => \is_string($policy) ? $this->_container->make($policy) : $policy)
             ->some(fn (IPolicy $policy) => $this->_authorizationService->authorizePolicy(null, $policy));
     }
 

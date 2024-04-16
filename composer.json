@@ -25,6 +25,7 @@
         "orchestra/testbench": "^9.0"
     },
     "require": {
+        "php": "^8.2",
         "illuminate/support": "^11.0",
         "illuminate/database": "^11.0",
         "illuminate/contracts": "^11.0",

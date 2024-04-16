@@ -8,7 +8,7 @@ use Codestage\Authorization\Contracts\IPermissionEnum;
 #[Attribute(
     Attribute::IS_REPEATABLE | Attribute::TARGET_CLASS | Attribute::TARGET_FUNCTION | Attribute::TARGET_METHOD
 )]
-class Authorize
+final readonly class Authorize
 {
     /**
      * This action requires that the user be authenticated and meet the authorization criteria.
