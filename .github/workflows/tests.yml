@@ -15,9 +15,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
+      - uses: shivammathur/setup-php@2.30.2
         with:
-          php-version: '8.1'
+          php-version: '8.2'
 
       - uses: actions/checkout@v3
 
@@ -30,7 +30,14 @@ jobs:
         with:
           name: ${{ github.sha }}
 
-      - name: Execute PHPUnit tests
+      - name: Create Database
+        run: |
+          mkdir -p database
+          touch database/database.sqlite
+          
+      - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
         env:
           APP_KEY: ${{ steps.generate-uuid.outputs.uuid }}
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
         run: vendor/bin/phpunit -c phpunit.dist.xml
