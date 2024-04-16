@@ -5,21 +5,19 @@ namespace Codestage\Authorization\Handlers;
 use Codestage\Authorization\Contracts\{IRequirement, IRequirementHandler};
 use Codestage\Authorization\Requirements\HasRoleRequirement;
 use Codestage\Authorization\Traits\HasPermissions;
-use Illuminate\Contracts\Auth\Guard as AuthManager;
+use Illuminate\Contracts\Auth\Factory as AuthManager;
 use Illuminate\Support\Collection;
 
 /**
  * @implements IRequirementHandler<HasRoleRequirement>
  */
-class HasRoleRequirementHandler implements IRequirementHandler
+readonly class HasRoleRequirementHandler implements IRequirementHandler
 {
     /**
      * HasRoleRequirementHandler constructor method.
-     *
-     * @param AuthManager $_authManager
      */
     public function __construct(
-        private readonly AuthManager $_authManager
+        private AuthManager $_authManager
     ) {
     }
 
@@ -32,7 +30,7 @@ class HasRoleRequirementHandler implements IRequirementHandler
     public function handle(IRequirement $requirement): bool
     {
         /** @var HasPermissions $user */
-        $user = $this->_authManager->user();
+        $user = $this->_authManager->guard()->user();
 
         // If there is no current user, the requirement fails
         if (!$user) {

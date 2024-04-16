@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 /**
  * @implements IRequirementHandler<HasPermissionRequirement>
  */
-class HasPermissionRequirementHandler implements IRequirementHandler
+readonly class HasPermissionRequirementHandler implements IRequirementHandler
 {
     /**
      * HasPermissionHandler constructor method.
@@ -19,7 +19,7 @@ class HasPermissionRequirementHandler implements IRequirementHandler
      * @param AuthManager $_authManager
      */
     public function __construct(
-        private readonly AuthManager $_authManager
+        private AuthManager $_authManager
     ) {
     }
 
