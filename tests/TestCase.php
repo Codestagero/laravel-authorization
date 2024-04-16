@@ -11,14 +11,14 @@ use Illuminate\Config\Repository;
 use Illuminate\Contracts\Auth\Factory as AuthManager;
 use Illuminate\Database\Schema\{Blueprint, Builder as SchemaBuilder};
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Foundation\Testing\{RefreshDatabase, WithFaker};
+use Illuminate\Foundation\Testing\{LazilyRefreshDatabase, WithFaker};
 use Illuminate\Support\Str;
 use Mockery;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
 {
-    use RefreshDatabase;
+    use LazilyRefreshDatabase;
     use WithFaker;
 
     /**
@@ -27,6 +27,7 @@ abstract class TestCase extends OrchestraTestCase
     public function tearDown(): void
     {
         Mockery::close();
+        parent::tearDown();
     }
 
     /**
