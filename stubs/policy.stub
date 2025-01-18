@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace DummyNamespace;
 
 use Codestage\Authorization\Contracts\IPolicy;
 use Codestage\Authorization\Contracts\IRequirement;
 
-class DummyClass implements IPolicy
+final readonly class DummyClass implements IPolicy
 {
     /**
      * DummyClass constructor method.
