@@ -5,7 +5,7 @@ namespace Codestage\Authorization\Console\Commands;
 use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
 
-#[AsCommand(name: 'make:policy {--R|resource=}', description: 'Create a new policy class')]
+#[AsCommand(name: 'make:policy', description: 'Create a new policy class')]
 class MakePolicyCommand extends GeneratorCommand
 {
     /**
@@ -14,6 +14,8 @@ class MakePolicyCommand extends GeneratorCommand
      * @var string
      */
     protected $type = 'Policy';
+
+    protected $signature = 'make:policy {name} {--R|resource=}';
 
     /**
      * Get the stub file for the generator.
