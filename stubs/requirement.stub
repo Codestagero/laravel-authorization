@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace DummyNamespace;
 
@@ -7,12 +8,6 @@ use Codestage\Authorization\Contracts\IRequirement;
 use NamespacedDummyRequirementHandler;
 
 #[HandledBy(DummyRequirementHandler::class)]
-class DummyClass implements IRequirement
+final readonly class DummyClass implements IRequirement
 {
-    /**
-     * DummyClass constructor method.
-     */
-    public function __construct()
-    {
-    }
 }
