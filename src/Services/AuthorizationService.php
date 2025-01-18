@@ -3,14 +3,21 @@
 namespace Codestage\Authorization\Services;
 
 use Codestage\Authorization\Attributes\HandledBy;
+use Codestage\Authorization\Contracts\{IPolicy,
+    IRequirement,
+    IRequirementHandler,
+    IResourcePolicy,
+    IResourceRequirementHandler};
 use Codestage\Authorization\Contracts\Services\IAuthorizationService;
-use Codestage\Authorization\Contracts\{IPolicy, IRequirement, IRequirementHandler, IResourceRequirementHandler};
 use Exception;
 use Illuminate\Contracts\Container\{BindingResolutionException, Container};
 use Illuminate\Support\{Collection, Enumerable};
+use InvalidArgumentException;
 use ReflectionClass;
+use function is_array;
+use function is_string;
 
-class AuthorizationService implements IAuthorizationService
+readonly class AuthorizationService implements IAuthorizationService
 {
     /**
      * AuthorizationService constructor method.
@@ -18,22 +25,28 @@ class AuthorizationService implements IAuthorizationService
      * @param Container $_container
      */
     public function __construct(
-        private readonly Container $_container
+        private Container $_container
     ) {
     }
 
     /**
      * @inheritDoc
      */
-    public function authorizePolicy(mixed $resource, IPolicy|string $policy): bool
+    public function authorizePolicy(mixed $resource, IPolicy|IResourcePolicy|string $policy): bool
     {
         // If the policy is not instantiated, get an instance
-        if (\is_string($policy)) {
+        if (is_string($policy)) {
             $policy = $this->_container->make($policy);
         }
 
         // Check that all the requirements defined by this policy pass
-        $requirements = $policy->requirements();
+        if ($policy instanceof IResourcePolicy) {
+            $requirements = $policy->requirements($resource);
+        } else if ($policy instanceof IPolicy) {
+            $requirements = $policy->requirements();
+        } else {
+            throw new InvalidArgumentException("Policy could not be instantiated because it is of an unknown type.");
+        }
 
         return $this->authorizeRequirements($resource, $requirements);
     }
@@ -96,9 +109,9 @@ class AuthorizationService implements IAuthorizationService
             /** @var HandledBy $instance */
             $instance = $attribute->newInstance();
 
-            if (\is_array($instance->handler)) {
+            if (is_array($instance->handler)) {
                 $handlers->push(...$instance->handler);
-            } else if (\is_string($instance->handler)) {
+            } else if (is_string($instance->handler)) {
                 $handlers->push($instance->handler);
             }
         }

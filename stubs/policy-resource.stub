@@ -1,0 +1,30 @@
+<?php
+
+namespace DummyNamespace;
+
+use Codestage\Authorization\Contracts\IResourcePolicy;
+use Codestage\Authorization\Contracts\IRequirement;
+
+/** @implements IResourcePolicy<DummyResource> */
+class DummyClass implements IResourcePolicy
+{
+    /**
+     * DummyClass constructor method.
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * The list of requirements that need to be fulfilled in order to complete this policy.
+     *
+     * @return array<int, IRequirement>
+     */
+    public function requirements(): array
+    {
+        return [
+            //
+        ];
+    }
+}

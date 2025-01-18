@@ -5,7 +5,7 @@ namespace Codestage\Authorization\Console\Commands;
 use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
 
-#[AsCommand(name: 'make:policy', description: 'Create a new policy class')]
+#[AsCommand(name: 'make:policy {--R|resource=}', description: 'Create a new policy class')]
 class MakePolicyCommand extends GeneratorCommand
 {
     /**
@@ -22,7 +22,7 @@ class MakePolicyCommand extends GeneratorCommand
      */
     protected function getStub(): string
     {
-        $stubName = 'policy.stub';
+        $stubName = empty($this->option('resource')) ? 'policy.stub' : 'policy-resource.stub';
 
         if (file_exists($this->laravel->basePath('stubs/' . $stubName))) {
             return $this->laravel->basePath('stubs/' . $stubName);
@@ -56,5 +56,33 @@ class MakePolicyCommand extends GeneratorCommand
         }
 
         return $name;
+    }
+
+    protected function buildClass($name): string
+    {
+        $stub = parent::buildClass($name);
+
+        $this->replaceResource($stub);
+
+        return $stub;
+    }
+
+    /**
+     * Replace the class name for the given stub.
+     *
+     * @return $this
+     */
+    protected function replaceResource(string &$stub): static
+    {
+        if (!empty($this->option('resource'))) {
+            $resourceName = (string) $this->option('resource');
+            $stub = str_replace(
+                search: ['DummyResource'],
+                replace: $resourceName,
+                subject: $stub
+            );
+        }
+
+        return $this;
     }
 }
