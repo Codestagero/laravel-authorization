@@ -15,23 +15,23 @@
     "authors": [
         {
             "name": "Marin Călin",
-            "email": "marincalin2551@hotmail.com"
+            "email": "calin.marin@codestage.ro"
         }
     ],
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.53",
-        "phpunit/phpunit": "^10",
+        "friendsofphp/php-cs-fixer": "^3",
+        "phpunit/phpunit": "^11",
         "mockery/mockery": "^1.6",
-        "orchestra/testbench": "^9.0"
+        "orchestra/testbench": "^10"
     },
     "require": {
         "php": "^8.2",
-        "illuminate/support": "^11.0",
-        "illuminate/database": "^11.0",
-        "illuminate/contracts": "^11.0",
-        "illuminate/console": "^11.0",
-        "illuminate/http": "^11.0",
-        "illuminate/auth": "^11.0"
+        "illuminate/support": "^12.0",
+        "illuminate/database": "^12.0",
+        "illuminate/contracts": "^12.0",
+        "illuminate/console": "^12.0",
+        "illuminate/http": "^12.0",
+        "illuminate/auth": "^12.0"
     },
     "extra": {
         "laravel": {
